@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "reactnd-understanding-shared-element",
+    "slug": "reactnd-understanding-shared-element",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "reactnd-understanding-shared-element"
+}
