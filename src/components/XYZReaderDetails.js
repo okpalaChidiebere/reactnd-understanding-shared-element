@@ -3,9 +3,10 @@ import { Platform, Image, ScrollView, Text, StyleSheet, View } from "react-nativ
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Ionicons as Icon } from "@expo/vector-icons"
 import { Colors } from "../values"
+import { SharedElement } from "react-navigation-shared-element"
 
 
-export default function XYZReaderDetails({ route, navigation }){
+const XYZReaderDetails = ({ route, navigation }) => {
     const { item } = route.params
     return(
         <SafeAreaView  style={{ flex: 1}} edges={["bottom", "left", "right"]}>     
@@ -24,9 +25,15 @@ export default function XYZReaderDetails({ route, navigation }){
             />
             <ScrollView /*contentContainerStyle={{marginTop: 306}}*/>
             <View style={styles.bannerContainer}>
-                <Image source={{uri: item.photo}} style={styles.image}/>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.subtitle}>{item.published_date+" by "+item.author}</Text>
+                <SharedElement id={`item.${item.id}.photo`} style={styles.image}>
+                    <Image source={{uri: item.photo}} style={{ flex: 1, resizeMode:"cover"}}/>
+                </SharedElement>
+                <SharedElement id={`item.${item.id}.title`}>
+                    <Text style={styles.title}>{item.title}</Text>
+                </SharedElement>
+                <SharedElement id={`item.${item.id}.subtitle`}>
+                    <Text style={styles.subtitle}>{item.published_date+" by "+item.author}</Text>
+                </SharedElement>              
             </View>
                 <Text style={styles.text}>
                     {item.body}
@@ -35,6 +42,28 @@ export default function XYZReaderDetails({ route, navigation }){
         </SafeAreaView>
     )
 }
+
+/**
+ * Here we ids that we are sharing so that it can look for its counter parts 
+ * in the screen that is pushed into the stack
+ */
+XYZReaderDetails.sharedElements = (route, otherRoute, showing) => {
+    const { item } = route.params
+    /**
+    * Here we are specifying the SharedElements that we want to transition
+    * 
+    * The ID(s) specified mst be a string and not just a Key that is an integer because,
+    * SharedElement transitions not just work for screens within your own app, You can
+    * pubish the transition name you support and have SharedElement transition between 
+    * different applications.
+    */
+    return [
+        {id: `item.${item.id}.photo`},
+        {id: `item.${item.id}.title`},
+        {id: `item.${item.id}.subtitle`},
+    ]  
+}
+export default XYZReaderDetails
 
 const styles = StyleSheet.create({
     bannerContainer: {
@@ -54,7 +83,6 @@ const styles = StyleSheet.create({
         ...StyleSheet.absoluteFillObject,
         width: undefined,
         height: undefined,
-        resizeMode: "cover",
         aspectRatio: 3/2,
     },
     text: {
@@ -66,10 +94,14 @@ const styles = StyleSheet.create({
         color: Colors.back,
         fontWeight: 'bold',
         paddingRight: 14,
+        position: "absolute",
+        bottom: 20,
     },
     subtitle: {
         color: Colors.back,
         fontSize: 16,
+        position:"absolute",
+        bottom: 0,
     }
 })
 

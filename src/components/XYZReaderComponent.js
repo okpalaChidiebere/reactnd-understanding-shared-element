@@ -1,6 +1,7 @@
 import React from "react"
 import { View, FlatList, Image, TouchableOpacity, Text, Dimensions, StyleSheet }  from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { SharedElement } from "react-navigation-shared-element"
 import { Colors, Strings } from "../values"
 
 
@@ -85,13 +86,19 @@ export default function XYZReaderComponent({ route, navigation }){
                     return (
                         <TouchableOpacity onPress={() => navigation.navigate(Strings.component_xyz_reader_details, { item })}>
                             <View style={styles.item}>
-                                <Image
-                                    source={{uri: item.thumb}}
-                                    style={styles.image}
-                                />
+                                <SharedElement id={`item.${item.id}.photo`}>
+                                    <Image
+                                        source={{uri: item.thumb}}
+                                        style={styles.image}
+                                    />
+                                </SharedElement>
                                 <View style={{ paddingHorizontal: 10, paddingVertical: 16 }}>
-                                    <Text numberOfLines={4} style={{ fontSize: 18 }}>{item.title}</Text>
-                                    <Text numberOfLines={2} style={{ width:"100%", color:"#757575", fontSize: 16 }}>{item.published_date+"\nby"+item.author}</Text>
+                                    <SharedElement id={`item.${item.id}.title`}>
+                                        <Text numberOfLines={1} adjustsFontSizeToFit style={{ fontSize: 18, position:"absolute", }}>{item.title}</Text>
+                                    </SharedElement>
+                                    <SharedElement id={`item.${item.id}.subtitle`}>
+                                        <Text numberOfLines={2} style={{ width:"100%", color:"#757575", fontSize: 16, position:"absolute", top: 20 }}>{item.published_date+"\nby"+item.author}</Text>
+                                    </SharedElement>
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -125,5 +132,12 @@ export function XYZReaderComponentOptions(){
         headerStyle: { 
             backgroundColor: Colors.theme_primary,
         },
+        /*
+        we update the transition of the content as well because the shared transition 
+        may not exactly match sometimes; But this will fix it.
+        */
+        cardStyleInterpolator: ({ current: { progress }}) => {
+            return { cardStyle: { opacity: progress } }
+        }
     }
 }
