@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import { View, Image, StyleSheet, Dimensions, Pressable } from "react-native"
 import { Strings } from "../values"
+import { SharedElement } from "react-navigation-shared-element";
 
 
 const margin = 16;
@@ -21,17 +22,19 @@ export default function StoryThumbnail({ story }){
     })
 
     return (
-        <Pressable
-        style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
-        onPress={() => {
-            setOpacity(0);
-            navigation.navigate(Strings.component_snapchat_stories_details, { story })
-        }}
-        >
-            <View style={[styles.container, /*{ opacity }*/]}>
-            <Image source={story.source} style={styles.image} />
-            </View>
-        </Pressable>
+        <SharedElement id={story.id}>
+            <Pressable
+            style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+            onPress={() => {
+                setOpacity(0);
+                navigation.navigate(Strings.component_snapchat_stories_details, { story })
+            }}
+            >
+                <View style={[styles.container, /*{ opacity }*/]}>
+                    <Image source={story.source} style={styles.image} />
+                </View>
+            </Pressable>
+        </SharedElement>
     )
 }
 
