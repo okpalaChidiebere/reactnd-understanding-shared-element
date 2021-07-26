@@ -12,7 +12,7 @@ const MainNavigator = () => (
   <Stack.Navigator 
     initialRouteName={Strings.component_main}
     screenOptions={{
-      gestureEnabled: false,
+      gestureEnabled: true,
       //headerShown: false,
       cardOverlayEnabled: true,
     }}
@@ -32,7 +32,7 @@ const MainNavigator = () => (
       name={Strings.component_snapchat_stories_details}
       component={SnapChatStoriesDetails}
       options={{
-        //headerShown: false,
+        headerShown: false,
         cardStyle: { backgroundColor: "transparent" },
       }}
     />
