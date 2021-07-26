@@ -1,20 +1,31 @@
 import React from "react"
-import { Image, StyleSheet, Dimensions } from "react-native"
+import { StyleSheet, Dimensions } from "react-native"
 import { Video } from "expo-av"
 import { SharedElement } from "react-navigation-shared-element"
 import { PanGestureHandler } from "react-native-gesture-handler"
-import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, runOnJS } from "react-native-reanimated"
+import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, runOnJS, withTiming } from "react-native-reanimated"
 import { snapPoint } from "react-native-redash"
 
 
 const { height } = Dimensions.get("window")
+const AnimatedVideo = Animated.createAnimatedComponent(Video) //Animathe the Expo Video component
 
 const SnapChatStoriesDetails = ({ route, navigation }) => {
 
     const { story } = route.params
+
+    /**
+     *  We want thesame border radious that is in the StoryThumbnail to be on this page as well when the user is dragging the page around
+     */
+    const isGestureActive = useSharedValue(false)
+
     const translateX = useSharedValue(0)
     const translateY = useSharedValue(0)
     const handleGuestureEvent = useAnimatedGestureHandler({
+      //onStart is called right about when the gesture starts.
+      onStart: () => {
+        isGestureActive.value = true
+      },
       //onActive is called when you are dragging around the direct child Animated View that the PanGestureHandler wraps
       onActive: ({ translationX, translationY }) => {
         //we need the translateX and translateY to do the scaling of the AnimatedView
@@ -44,6 +55,7 @@ const SnapChatStoriesDetails = ({ route, navigation }) => {
             translateX.value = withSpring(0, { velocity: velocityX})
             translateY.value = withSpring(0, { velocity: velocityY})
           }
+          isGestureActive.value = false
       }
     })
     const animatedStyle = useAnimatedStyle(() => {
@@ -55,12 +67,22 @@ const SnapChatStoriesDetails = ({ route, navigation }) => {
       }
     })
 
+    const animatedBorderStyle = useAnimatedStyle(() => ({
+      /** 
+       * we do a transition to the borderRadius
+       * 
+       * Once the user starts dragging the detailScreen, we set the borderRadius, otherwise 
+       * the borderRadius will be 0 meaning the detailScreen is in fullScreen
+       *  */
+      borderRadius: withTiming(isGestureActive.value ? 20 : 0)
+    }))
+
     return (
       <PanGestureHandler onGestureEvent={handleGuestureEvent}>
         <Animated.View style={[{ flex: 1}, animatedStyle]}>
           <SharedElement id={story.id} style={{ flex: 1}}>
               {!story.video && (
-                <Image
+                <Animated.Image
                   source={story.source}
                   style={[
                     {
@@ -68,20 +90,20 @@ const SnapChatStoriesDetails = ({ route, navigation }) => {
                       width: undefined,
                       height: undefined,
                       resizeMode: "cover",
-                      borderRadius: 0
                     },
+                    animatedBorderStyle,
                   ]}
                 />
               )}
               {story.video && (
-                <Video
+                <AnimatedVideo
                   source={story.video}
                   rate={1.0}
                   isMuted={false}
                   resizeMode="cover"
                   shouldPlay
                   isLooping
-                  style={[StyleSheet.absoluteFill, { borderRadius: 0 }]}
+                  style={[StyleSheet.absoluteFill, animatedBorderStyle]}
                 />
               )}
           </SharedElement>
