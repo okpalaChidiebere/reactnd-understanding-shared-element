@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions } from "react-native"
 import { Video } from "expo-av"
 import { SharedElement } from "react-navigation-shared-element"
 import { PanGestureHandler } from "react-native-gesture-handler"
-import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, runOnJS, withTiming } from "react-native-reanimated"
+import Animated, { useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring, runOnJS, withTiming, interpolate, Extrapolate } from "react-native-reanimated"
 import { snapPoint } from "react-native-redash"
 
 
@@ -59,10 +59,23 @@ const SnapChatStoriesDetails = ({ route, navigation }) => {
       }
     })
     const animatedStyle = useAnimatedStyle(() => {
+      /**
+       * We interpolate the translateY. 
+       * - At 0, the slaeValue will be 1 (fullScreenMode)
+       * - At height, we scale the screen down to half
+       * CLAMP means we dont want to go above 0.5 :)
+       */
+      const scale = interpolate(translateY.value, 
+        [0, height], 
+        [1, 0.5],
+        Extrapolate.CLAMP
+      )
       return {
         transform: [
-          { translateX: translateX.value },
-          { translateY: translateY.value },
+          //FYI: we want the screen to stay in touch with our finger and the screen scale. So we multiply trasnlate values by scale
+          { translateX: translateX.value * scale },
+          { translateY: translateY.value * scale },
+          { scale }
         ],
       }
     })
