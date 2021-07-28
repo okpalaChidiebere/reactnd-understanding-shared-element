@@ -1,6 +1,7 @@
 import React from "react"
 import { createSharedElementStackNavigator } from "react-navigation-shared-element"
 import MainComponent, { MainComponentOptions } from "./components/MainComponent"
+import PanResponderTest, { PanResponderTestOptions } from "./components/PanResponderTest"
 import SnapChatStoriesComponent, { SnapChatStoriesComponentOptions } from "./components/SnapChatStoriesComponent"
 import SnapChatStoriesDetails from "./components/SnapChatStoriesDetails"
 import XYZReaderComponent, { XYZReaderComponentOptions } from "./components/XYZReaderComponent"
@@ -45,6 +46,11 @@ const MainNavigator = () => (
       name={Strings.component_xyz_reader_details}
       component={XYZReaderDetails}
       options={XYZReaderDetailsOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_panresponser_test}
+      component={PanResponderTest}
+      options={PanResponderTestOptions}
     />
   </Stack.Navigator>
 )

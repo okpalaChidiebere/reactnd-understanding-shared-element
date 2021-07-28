@@ -39,6 +39,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressPanResponserTest = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_panresponser_test)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -65,6 +72,17 @@ export default function MainComponent(props){
             <View style={styles.demoItemContent}>
               <Heading3>XYZ Reader Demo</Heading3>
               <Caption style={styles.description}>Article Reveal with shared element transitions </Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressPanResponserTest}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Basics of Understanding Gestures</Heading3>
+              <Caption style={styles.description}>Maintain Touchable Items with a Parent PanResponder in React Native</Caption>
             </View>
           </View>
         </TouchableOpacity>

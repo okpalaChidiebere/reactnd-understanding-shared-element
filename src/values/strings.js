@@ -8,4 +8,5 @@ export const Strings = {
     component_snapchat_stories_details: "SnapChatStoriesDetails",
     component_xyz_reader: "XYZReaderComponent",
     component_xyz_reader_details: "XYZReaderDetailsComponent",
+    component_panresponser_test: "PanResponderTest",
 }
