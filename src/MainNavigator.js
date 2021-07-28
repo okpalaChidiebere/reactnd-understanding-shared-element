@@ -1,5 +1,6 @@
 import React from "react"
 import { createSharedElementStackNavigator } from "react-navigation-shared-element"
+import KittenCards, { KittenCardsOptions } from "./components/KittenCards"
 import MainComponent, { MainComponentOptions } from "./components/MainComponent"
 import PanResponderTest, { PanResponderTestOptions } from "./components/PanResponderTest"
 import SnapChatStoriesComponent, { SnapChatStoriesComponentOptions } from "./components/SnapChatStoriesComponent"
@@ -51,6 +52,11 @@ const MainNavigator = () => (
       name={Strings.component_panresponser_test}
       component={PanResponderTest}
       options={PanResponderTestOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_Kitten_cards}
+      component={KittenCards}
+      options={KittenCardsOptions}
     />
   </Stack.Navigator>
 )

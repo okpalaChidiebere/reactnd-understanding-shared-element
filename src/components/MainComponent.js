@@ -46,6 +46,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressKittenCards = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_Kitten_cards)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -83,6 +90,19 @@ export default function MainComponent(props){
             <View style={styles.demoItemContent}>
               <Heading3>Basics of Understanding Gestures</Heading3>
               <Caption style={styles.description}>Maintain Touchable Items with a Parent PanResponder in React Native</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressKittenCards}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Kitten Cards Demo</Heading3>
+              <Caption style={styles.description}>Dragging cards left/right has become the new way to quickly make decisions on apps. 
+              Adding draggable card stacks can take some fine tuning to get the ideal feeling for your app. We'll walk through how to 
+              implement the drag and additionally add an extra animation step to scale in the next card.</Caption>
             </View>
           </View>
         </TouchableOpacity>

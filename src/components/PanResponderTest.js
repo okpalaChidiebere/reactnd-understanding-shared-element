@@ -70,8 +70,8 @@ export default function PanResponderTest(){
              * onPanResponderMove is called right after onMoveShouldSetResponderCapture. 
              * 
              * NOTE if the initial value onMoveShouldSetResponderCapture is false, onPanResponderMove will not be called. But
-             * once you set onMoveShouldSetResponderCapture becomes true dureing the dragEvent onPanResponderMove will start capturing events.
-             * This time it done not matter if onMoveShouldSetResponderCapture goes back to false. It will still capture.
+             * once you set onMoveShouldSetResponderCapture to true during the gesture onPanResponderMove will start capturing events.
+             * This time it does not matter if onMoveShouldSetResponderCapture goes back to false. It will still capture.
              * The onPanResponderMove stops capturing this time, when the onPanResponderTerminationRequest is made: (ie geusture event stops)
              * 
              * This is where we want to update the UI based on the gestureState. 

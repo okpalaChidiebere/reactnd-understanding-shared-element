@@ -9,4 +9,5 @@ export const Strings = {
     component_xyz_reader: "XYZReaderComponent",
     component_xyz_reader_details: "XYZReaderDetailsComponent",
     component_panresponser_test: "PanResponderTest",
+    component_Kitten_cards: "KittenCards",
 }
