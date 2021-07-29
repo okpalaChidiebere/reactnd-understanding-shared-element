@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react"
-import { StyleSheet, View, Text, Dimensions, Animated, PanResponder } from "react-native"
+import { StyleSheet, View, Text, Dimensions, Animated, PanResponder, TouchableOpacity } from "react-native"
 import "react-native-reanimated" //you have to import this for the react-native-redash package to work
 import { clamp } from "react-native-redash"
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -177,6 +177,31 @@ export default function KittenCards({ }){
     }
 
     /**
+     * NOTE: Just because we are driving an Animated.ValueXY base upon an Animated.event
+     * does not mean that we can cannot independently control it with a separate animation
+     * 
+     * But be sure to set the animatedValue back to default postion if need. Like in our case the
+     * transitionNext method does the reset for us
+     */
+    //we want to do a movement of the No to the left direction
+    const handleNo  = () => {
+        //start the animation and transition to the next card
+        Animated.timing(animation.x, {
+            toValue: -SWIPE_THRESHOLD,
+            useNativeDriver: true
+        }).start(transitionNext)
+    }
+
+    //we want to do a movement of the Yes to the left direction
+    const handleYes  = () => {
+        //start the animation and transition to the next card
+        Animated.timing(animation.x, {
+            toValue: SWIPE_THRESHOLD,
+            useNativeDriver: true
+        }).start(transitionNext)
+    }
+
+    /**
      * Define the rotation for our cards
      * 
      * We use Animated.X because our animation is driven of the x axis
@@ -282,7 +307,19 @@ export default function KittenCards({ }){
                     }
                 </View>
                 <View style={styles.bottomBar}>
-                    <Text>Here</Text>
+                    <TouchableOpacity
+                        onPress={handleNo}
+                        style={[styles.button, styles.nopeButton]}
+                    >
+                        <Text style={styles.nopeText}>NO</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={handleYes}
+                        style={[styles.button, styles.yupButton]}
+                    >
+                        <Text style={styles.yupText}>YES</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>
@@ -315,6 +352,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowOffset: { x: 0, y: 0 },
         shadowRadius: 5,
+        elevation: 5,
         borderWidth: 1,
         borderColor: "#FFF",
     },
@@ -328,6 +366,23 @@ const styles = StyleSheet.create({
         height: null, //null means we an apply a flex property to the view to ahere to fhe flex width
         borderRadius: 2,
         flex: 3,
+    },
+    button: {
+        marginHorizontal: 10,
+        padding: 20,
+        borderRadius: 30,
+        alignItems: "center",
+        justifyContent: "center",
+        shadowOpacity: 0.3,
+        shadowOffset: { x: 0, y: 0 },
+        shadowRadius: 5,
+        elevation: 5,
+    },
+    yupButton: {
+        shadowColor: "green",
+    },
+    nopeButton: {
+        shadowColor: "red",
     },
 });
 
