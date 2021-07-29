@@ -57,6 +57,13 @@ export default function StaggeredHeadDrag({ }){
                      * We dont want that
                      */
                     animation.extractOffset()
+
+                    /**
+                     * extractOffset was suppose to set x and y values to 0 but it actually did not
+                     * This resulted ins a space between the first item that has the panHandler and the other heads. So the dragging looked of
+                     * This also resulted to the heads at the back being thrown off screen after you finished dragging the first item. But visually you will see it there
+                     */
+                    animation.setValue({ x: 0, y: 0 }) //necessary was necessary
                 })
             },
             onPanResponderMove: (e, { dx, dy }) => {
@@ -65,8 +72,29 @@ export default function StaggeredHeadDrag({ }){
                     x: dx,
                     y: dy,
                 })
+
+                /** Now lets control the other heads to  stagger to wherever you drag the first head*/
+                const otherHeads = heads.slice(1).map //we did not pick the first head because we are not staggering it
+                (({ animation }, index ) => {
+                    /** 
+                     * Each head will have to sprint to the new loaction once the first head moves
+                     * This will have each head operating on a separate animation. So a stagger will actually happen */
+                    Animated.sequence([
+                        Animated.delay(index * 10), //we want to cause a delay for each animation base don the head. This will create the small distance between heads
+                        Animated.spring(animation, {
+                            toValue: { x: dx, y: dy },
+                            useNativeDriver: false,
+                        }),
+                    ]).start()
+
+                    /** 
+                     * Note the animatins we implementd is similar to Animated.stagger() But using Animated.stagger did not really gve us the effect we want
+                     * https://codedaily.io/courses/Master-React-Native-Animations/Stagger
+                     * */
+                })
             },
-            // onPanResponderRelease: (e, gestaureState) => {} //Since mo release animation, so we dont need this
+            // onPanResponderRelease: (e, gestaureState) => {} //Since mo release animation, so we dont need this. But theoretically you 
+            //could animate and lock a head to either the left or right side depending on it's position.
         })
     ).current
 
