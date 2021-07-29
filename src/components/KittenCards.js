@@ -167,9 +167,17 @@ export default function KittenCards({ }){
                             const cardStyle = isLastItem ? animatedCardStyles : undefined
                             const imageStyle = isLastItem ? animatedImageStyles : undefined
                             
+                            /**
+                             * We appled the nextCardStyle if the next item is labeled as
+                             * isSecondToLast 
+                             */
+                            const nextCardStyle = isSecondToLast ? {
+                                transform: [{ scale: next }]
+                            }: undefined
+
                             return (
                                 <Animated.View 
-                                    style={[styles.card, cardStyle]} 
+                                    style={[styles.card, cardStyle, nextCardStyle]} 
                                     key={id}
                                     {...panHandlers /**Now we are able to drag this this item(s) */}
                                 >
