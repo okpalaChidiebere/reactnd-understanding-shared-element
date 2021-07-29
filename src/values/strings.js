@@ -10,4 +10,5 @@ export const Strings = {
     component_xyz_reader_details: "XYZReaderDetailsComponent",
     component_panresponser_test: "PanResponderTest",
     component_Kitten_cards: "KittenCards",
+    component_staggered_head_drag: "Staggered Head Drag",
 }

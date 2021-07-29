@@ -5,6 +5,7 @@ import MainComponent, { MainComponentOptions } from "./components/MainComponent"
 import PanResponderTest, { PanResponderTestOptions } from "./components/PanResponderTest"
 import SnapChatStoriesComponent, { SnapChatStoriesComponentOptions } from "./components/SnapChatStoriesComponent"
 import SnapChatStoriesDetails from "./components/SnapChatStoriesDetails"
+import StaggeredHeadDrag, { StaggeredHeadDragOptions } from "./components/StaggeredHeadDrag"
 import XYZReaderComponent, { XYZReaderComponentOptions } from "./components/XYZReaderComponent"
 import XYZReaderDetails, { XYZReaderDetailsOptions } from "./components/XYZReaderDetails"
 import { Strings } from "./values"
@@ -57,6 +58,11 @@ const MainNavigator = () => (
       name={Strings.component_Kitten_cards}
       component={KittenCards}
       options={KittenCardsOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_staggered_head_drag}
+      component={StaggeredHeadDrag}
+      options={StaggeredHeadDragOptions}
     />
   </Stack.Navigator>
 )
