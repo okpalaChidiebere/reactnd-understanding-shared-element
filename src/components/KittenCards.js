@@ -89,6 +89,49 @@ export default function KittenCards({ }){
         })
     ).current
 
+    /**
+     * Define the rotation for our cards
+     * 
+     * We use Animated.X because our animation is driven of the x axis
+     * 
+     * negative values of x for how far left and positiove values of x for how far right.
+     * Value 0 is when the card is at rest
+     * */
+    const rotate = animation.x.interpolate({
+        inputRange: [-200, 0, 200],
+        outputRange: ["-30deg", "0deg", "30deg"],
+        extrapolate: "clamp" //for the card not no rotate past 30 degrees, we a clamp for the interpolate
+    })
+
+    const opacityInterpolate = animation.x.interpolate({
+        inputRange: [-200, 0, 200],
+        outputRange: [.5, 1, .5], //we dont want our opacity to go past 50%
+        extrapolate: "clamp"
+    })
+
+    const animatedCardStyles = {
+        opacity,
+        transform: [
+            {
+                rotate,
+            },
+            /**
+             * Remember this is simar to just writing:
+             * {
+                    translateX: animation.x
+                }, 
+                {
+                    translateY: animation.y
+                }
+             */
+            ...animation.getTranslateTransform() //returns our translateX and translateY from our Animated.ValueXY
+        ]
+    }
+
+    const animatedImageStyles = {
+        opacity: opacityInterpolate,
+    }
+
 
     return(
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
@@ -109,14 +152,30 @@ export default function KittenCards({ }){
                              * Pro Tip: Anytime you have animatedView, the default style is to use an array because we know we will eventually be adding 
                              * an animated style later :)
                              *  */
+
+                            /**
+                             * Since we are just looping over the two cards, we want to know if we are looking 
+                             * at the card in front or the card at the back. So we define some helpers
+                             * 
+                             * Note: we only have to cards so our logic of determing the card in front or the card at the back make sense
+                             * Remember that we reversed the list us checking the first card on screen as the last index and so on makesense :)                             
+                             * */
+                            const isLastItem = index === items.length - 1
+                            const isSecondToLast = index === items.length - 2
+
+                            const panHandlers = isLastItem ? panResponder.panHandlers : {}
+                            const cardStyle = isLastItem ? animatedCardStyles : undefined
+                            const imageStyle = isLastItem ? animatedImageStyles : undefined
+                            
                             return (
                                 <Animated.View 
-                                    style={[styles.card]} 
+                                    style={[styles.card, cardStyle]} 
                                     key={id}
+                                    {...panHandlers /**Now we are able to drag this this item(s) */}
                                 >
                                     <Animated.Image
                                         source={{uri: image}}
-                                        style={[styles.image]}
+                                        style={[styles.image, imageStyle]}
                                         resizeMode="cover"
                                     />
                                     <View style={styles.lowerText}>
