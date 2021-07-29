@@ -244,6 +244,41 @@ export default function KittenCards({ }){
         opacity: opacityInterpolate,
     }
 
+    /**
+     * We want to have the text Scale and fade in based on the x value
+     */
+    //set animations for Yup
+    const yesOpacity = animation.x.interpolate({
+        inputRange: [0, 150],
+        outputRange: [0, 1],
+    })
+    const yesScale = animation.x.interpolate({
+        inputRange: [0, 150],
+        outputRange: [0.5, 1],
+        extrapolate: "clamp",
+    })
+    const animatedYupStyles = {
+        transform: [{ scale: yesScale }, { rotate: "-30deg" }],
+        opacity: yesOpacity,
+    }
+    //end text Scale and fade in based on the for dragging to right (positive x value)
+
+    //define interpolations and styles for `Nope` text effects
+    const noOpacity = animation.x.interpolate({
+        inputRange: [-150, 0],
+        outputRange: [1, 0],
+    })
+    const noScale = animation.x.interpolate({
+        inputRange: [-150, 0],
+        outputRange: [1, 0.5],
+        extrapolate: "clamp",
+    })
+    const animatedNopeStyles = {
+        transform: [{ scale: noScale }, { rotate: "30deg" }],
+        opacity: noOpacity,
+    }
+    /** End scaling and fading for Nope text effecs */
+    
 
     return(
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
@@ -301,6 +336,18 @@ export default function KittenCards({ }){
                                     <View style={styles.lowerText}>
                                         <Text>{text}</Text>
                                     </View>
+
+                                    {isLastItem && ( //we are only showing this text in the front card
+                                        <Animated.View style={[styles.nope, animatedNopeStyles]}>
+                                        <Text style={styles.nopeText}>Nope!</Text>
+                                        </Animated.View>
+                                    )}
+
+                                    {isLastItem && ( //we are only showing this text in the front card
+                                        <Animated.View style={[styles.yup, animatedYupStyles]}>
+                                        <Text style={styles.yupText}>Yup!</Text>
+                                        </Animated.View>
+                                    )}
                                 </Animated.View>
                             );
                         })
@@ -383,6 +430,34 @@ const styles = StyleSheet.create({
     },
     nopeButton: {
         shadowColor: "red",
+    },
+    yup: {
+        borderColor: "green",
+        borderWidth: 2,
+        position: "absolute",
+        padding: 20,
+        borderRadius: 5,
+        top: 20, 
+        left: 20, //we want the yup text to appear on the left as you swipe the card to the right
+        backgroundColor: "#FFF",
+    },
+    yupText: {
+        fontSize: 16,
+        color: "green",
+    },
+    nope: {
+        borderColor: "red",
+        borderWidth: 2,
+        position: "absolute",
+        padding: 20,
+        borderRadius: 5,
+        right: 20, //we want the yup text to appear on the right as you swipe the card to the left
+        top: 20,
+        backgroundColor: "#FFF",
+    },
+    nopeText: {
+        fontSize: 16,
+        color: "red",
     },
 });
 
