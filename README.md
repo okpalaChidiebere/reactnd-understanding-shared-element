@@ -10,4 +10,13 @@
 - You can Views like Button, Text, Image and View. In addtion these views may need to have the `position: absolute` in their style respoectively for better transition
 - The DetailScreen that the Mater Screen will share elements with can be a Modal Screen(with transparent, covered or opaque background. This helps potray the illusion of the detail screen lifting up from the listLitem to form its own surface from the Master screen) or it can be a regular screen as well(with noraml navigation transition animations)
 
+# Kittens Items
+- We added the card drag panHandler first
+- Applied the nextStyle card
+- Added logic for what to do in onPanResponderRelease
+- Added Buttons to trigger the Card drag as well
+- Add text(Nope/Yup) to Scale and fade in based on the x value (drag left or right)
+- **TakeAways:** In onPanResponderRelease, based on upon distance(dx in our case) that have been dragged in a particular direction, you can the derive, actions to be taken. Whether it is reseting the animation, or doing a decay to do a throw. And. once the animation is complete, we do a transitionNext that either setup more animations or then setState to set up the next drag view
+- We saw the power of interpolation. The Animated Library comes from interpolation. You are able to do interpolation on interpolations and it will still be reactive regarding of a timming or anything else that is triggering the animation. The output range of an interpolate can become the input range of another interpolate. When the animations are connected with interpolate it requires you to control a singular value and drive a range of animations. Meaning less work for us, and better animations.
+- **Translate:** Translations operate like a grid, where 0,0 is the top left of the element. The Y piece will operate on the Y axis, go up and down/move top to bottom. The X will operate on X axis, go left to right. You may need to move item across the screen; whether it be in a drag or ani animating it across the screen before it disappear; the appropriate and most performant way to achieve this is to use translate. There are trade offs to using translate. Since it doesn't effect layout, the surrounding layouts won't be effected. For example if you wanted to move an item left or right and have another item fill in to it's spot, this won't happen. You would need to manually adjust the other elements in conjunction with the transform. In order to get this style of animation to work you'd have to animate layouts.
 
