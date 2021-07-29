@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react"
 import { StyleSheet, View, Text, Dimensions, Animated, PanResponder } from "react-native"
+import "react-native-reanimated" //you have to import this for the react-native-redash package to work
+import { clamp } from "react-native-redash"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 
@@ -71,13 +73,62 @@ export default function KittenCards({ }){
                     dx: animation.x,
                     dy: animation.y,
                 },
-            ], { useNativeDriver: true }),
+            ], { 
+                useNativeDriver: false //onPanResponder is implemented in js, so we cant use native driver. 
+                //https://stackoverflow.com/questions/45363416/usenativedriver-with-panresponder
+            }),
             /**
              * When the card is released, and it has not pass a certain point, we will bounce the card back to the middle
              * However, if we go a certain distance, there will be a decay or velocity that will make our card move of the 
              * screen in a particular direction
              */
-            onPanResponderRelease: (e, gestaureState) => {
+            onPanResponderRelease: (e, { dx, vx, vy }) => {
+                /** we want access to 
+                 * - the velocity in the x direction - vx
+                 * - the velocity in the y direction - vy
+                 * 
+                 * This helps us to do a decay animation when we drag and release a card.
+                 * If the card has not gone far enough, we will just bounce the card back to the center 
+                 * Else, we throw the card away from the screen
+                 *  */
+
+                let velocity
+
+                //Here you are dragging(swiping) card to the right
+                if(vx >= 0){
+                    //we dont want to throw the card off screen that why we use clamp
+                    velocity = clamp(vx, 3, 5) //NOTE, thow at a minimum velolcity of 3 and max of 5
+                }
+                //here you are dragging the card left
+                else if(vx < 0){
+                    /**
+                     * NOTE: we multiplied by negative number so we get a negative value. 
+                     * Negative values of velocity of means to the left of screen
+                     * 
+                     * Maths.abs removed the negative value from the vx remember. So we just added the negative symbol back after calculating the velocity
+                     */
+                    velocity = clamp(Math.abs(vx), 3, 5) * -1 
+                }
+                //end calculating velocity on how to throw the card ither to the left or right
+
+                /**
+                 * Here we are checking if we want to run a spring animation of the card going back to the center
+                 * Or we throw the card away off the screen
+                 */
+                if(Math.abs(dx) > SWIPE_THRESHOLD){
+                    //we use Animated.decay to simulate a throw animation
+                    Animated.decay(animation, {
+                        velocity: { x: velocity, y: vy },
+                        deceleration: .98, //.98 is the default decelaration value anyways
+                        useNativeDriver: true,
+                    }).start(transitionNext)
+                }else{
+                    Animated.spring(animation, {
+                        toValue: { x: 0, y: 0},
+                        friction: 4, 
+                        useNativeDriver: true,
+                    }).start()
+                }
                 
             }
             /**
@@ -88,6 +139,42 @@ export default function KittenCards({ }){
 
         })
     ).current
+
+    /**
+     * Implemented funtions will help us reuse animations easily. Like for buttons press and also in onPanResponderRelease
+     * 
+     * This method transitions animations from the current card to the next card.
+     * As well the poping of the arrays
+     */
+    const transitionNext = () => {
+        //we want to add an opacity animation on the SwipedCard and
+        //spring in the second card before we swap it
+        Animated.parallel([
+            Animated.timing(opacity, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true
+            }),
+            Animated.spring(next, {
+                toValue: 1,
+                friction: 4,
+                useNativeDriver: true,
+            }).start(() => {
+                //here we are sure the animation is completed before we transition our card
+                setItems(currState => currState.slice(1)) //updae to the state will cause a re-render
+
+                /**
+                 * The reason we reset the animation was that after we have transition our card to the next Item,
+                 * the next Card was being thrown off the page. eg if we swipe away index 1, index 2 shown for about 50ms as being replaced by index3
+                 * 
+                 * To solve this, we transition and reset all of our animations
+                 */
+                next.setValue(.9) //set the next scale back to .9
+                opacity.setValue(1) //set the opacity back to 1
+                animation.setValue({ x:0, y: 0 }) //the AnimatedXY back to 0
+            })
+        ])
+    }
 
     /**
      * Define the rotation for our cards
