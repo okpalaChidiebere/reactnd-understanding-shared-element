@@ -67,6 +67,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressAnimateHidden = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_unmount_animations)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -140,6 +147,21 @@ export default function MainComponent(props){
               <Heading3>Flubber and Animated for Better SVG Path Morphing</Heading3>
               <Caption style={styles.description}>Animate Simple SVG paths. You must have the start path (default image or icon you render)
               and End Path (the next image or icon you can to animate to)</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressAnimateHidden}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Animate Hidden</Heading3>
+              <Caption style={styles.description}>Animated doesn't support unmounting animations, which means you need to manually control 
+              whether or not an item will stay mounted via state. We learned how to handle Interuped Animations as well. Handling interrupted 
+              animations is a crucial part of the user experience. Generally when animations are quick, or they are a single animation the 
+              chances of being interrupted is lower. However when dealing with more complex, and longer running animations you don't want 
+              to trap the user after they have made a mistake.</Caption>
             </View>
           </View>
         </TouchableOpacity>

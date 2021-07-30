@@ -7,6 +7,7 @@ import PanResponderTest, { PanResponderTestOptions } from "./components/PanRespo
 import SnapChatStoriesComponent, { SnapChatStoriesComponentOptions } from "./components/SnapChatStoriesComponent"
 import SnapChatStoriesDetails from "./components/SnapChatStoriesDetails"
 import StaggeredHeadDrag, { StaggeredHeadDragOptions } from "./components/StaggeredHeadDrag"
+import UnmountAnimation, { UnmountAnimationOptions } from "./components/UnmountAnimations"
 import XYZReaderComponent, { XYZReaderComponentOptions } from "./components/XYZReaderComponent"
 import XYZReaderDetails, { XYZReaderDetailsOptions } from "./components/XYZReaderDetails"
 import { Strings } from "./values"
@@ -69,6 +70,11 @@ const MainNavigator = () => (
       name={Strings.component_animated_svg}
       component={AnimatedSvg}
       options={AnimatedSvgOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_unmount_animations}
+      component={UnmountAnimation}
+      options={UnmountAnimationOptions}
     />
   </Stack.Navigator>
 )
