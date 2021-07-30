@@ -1,5 +1,6 @@
 import React from "react"
 import { createSharedElementStackNavigator } from "react-navigation-shared-element"
+import AnimatedSvg, { AnimatedSvgOptions } from "./components/AnimatedSvg"
 import KittenCards, { KittenCardsOptions } from "./components/KittenCards"
 import MainComponent, { MainComponentOptions } from "./components/MainComponent"
 import PanResponderTest, { PanResponderTestOptions } from "./components/PanResponderTest"
@@ -63,6 +64,11 @@ const MainNavigator = () => (
       name={Strings.component_staggered_head_drag}
       component={StaggeredHeadDrag}
       options={StaggeredHeadDragOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_animated_svg}
+      component={AnimatedSvg}
+      options={AnimatedSvgOptions}
     />
   </Stack.Navigator>
 )

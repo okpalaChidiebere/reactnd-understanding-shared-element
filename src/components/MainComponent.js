@@ -60,6 +60,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressAnimateSVG = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_animated_svg)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -121,6 +128,18 @@ export default function MainComponent(props){
             <View style={styles.demoItemContent}>
               <Heading3>Staggered Head Drag</Heading3>
               <Caption style={styles.description}>This is an animation similar to FB heads drags for chats</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressAnimateSVG}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Flubber and Animated for Better SVG Path Morphing</Heading3>
+              <Caption style={styles.description}>Animate Simple SVG paths. You must have the start path (default image or icon you render)
+              and End Path (the next image or icon you can to animate to)</Caption>
             </View>
           </View>
         </TouchableOpacity>
