@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useRef, useLayoutEffect } from "react"
 import {
   StyleSheet,
   Text,
@@ -12,13 +12,20 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
 
 export default function StaggerFormItems(){
     const email = useRef(new Animated.Value(0)).current
     const password = useRef(new Animated.Value(0)).current
     const button = useRef(new Animated.Value(0)).current
-
-    const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
+    /**
+     * We get the reference to the input that we want to focus first,
+     * so that once our animation is complete, we will focus on the 
+     * first form filed and the keyboard will come up. 
+     * 
+     * We don't wantthe keyboard to come up during the animation.
+     */
+    const emailRef = useRef()
 
     /**
      * Because each of the animations are exact thesame, we created a function that takes in an animatedValue an returns 
@@ -42,6 +49,42 @@ export default function StaggerFormItems(){
         }
     }
 
+    //called right after the component mounts
+    useLayoutEffect(() => {
+
+        //we dont realy need to craft our own stagger like we did for staggered heads :)
+        //we have a stagger of 100ms between each animation
+        /**
+         * 
+         */
+        const anim = Animated.stagger(100, [
+            Animated.timing(email, {
+              toValue: 1,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+            Animated.timing(password, {
+              toValue: 1,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+            Animated.timing(button, {
+              toValue: 1,
+              duration: 400,
+              useNativeDriver: true,
+            }),
+        ])
+
+        //we start the animation
+        anim.start(() => {
+            /**
+             * when dealing with forms, focus the form field for the users so 
+             * they do not have to tap on the form field. */
+            emailRef.current.focus() //we can now focus on our email input
+        })
+    }, [ ])
+    
+
     /**FYI: None of the items will be visible, based on the default style because the opacity is 0. 
      * The items are there bit just not visible. No magic here :)
      *  */
@@ -62,6 +105,7 @@ export default function StaggerFormItems(){
                         <View style={styles.container}>
                             <Text style={styles.title}>Login</Text>
                             <AnimatedTextInput
+                                ref={emailRef}
                                 style={[styles.input, animatedEmailStyle]}
                                 placeholder="Email"
                                 keyboardType="email-address"

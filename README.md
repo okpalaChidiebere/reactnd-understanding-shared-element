@@ -56,3 +56,11 @@ When the box is at rest it stays at the top-left corner.
 - For the box to go from the top-right corner back to starting position there will be a translateX(negative value)
 - So we see there is a translateXY to all four corners with a fixed sized box.
 - **Main TakeAway:** It does not matter whatever you are animating, you can always grab a dynamic values of the element, like width and height, XY(to get the position of the element in screen) to control how it moves or how you want to move it across the screen. You can always use onLayout to grab these values, even if it is a flex, there will always be values that you can grab and determine how you want to control your animation dynamically 
+
+# Breaking down Stagger Form Items Visibility on Mount
+Common Animation that occurs are onMount animations. These are animation that happens to focus your attention on particular item(s) of importance.
+- When the login screen mounts, each of the form fields staggers in its opacity.
+- Also there is an offset on the position of the form files which gives them the illusion of being moved downwards a bit as the opacity for each item goes to 1
+- We could use an interpolation for each of the form items, but we choose to set it up as each individual animated value so that we can use stagger. 
+- There will be an interpolation of zero to one that offsets each item position to about 5 and then transitions in. We will set position of items using layouts and we will setValues that will offset the position to begin and then will animate it back in to the normal position. This is best because we don't have to use delay to control the positioning of the items. We let the layout take effect and we use the translates to offset it correctly.
+- **Takeaway:** Even though the duration of the animations have thesame, Because of the stagger they will all link up together perspectively. This is good useful for implementing Coordinated Motions, Chaotic Motions on ListItems. You can use this library [react-native-animatable](https://github.com/oblador/react-native-animatable) but i think you can do it without the library :)
