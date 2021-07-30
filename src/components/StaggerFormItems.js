@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 import {
   StyleSheet,
   Text,
@@ -14,6 +14,41 @@ import { Colors, Strings } from "../values"
 
 
 export default function StaggerFormItems(){
+    const email = useRef(new Animated.Value(0)).current
+    const password = useRef(new Animated.Value(0)).current
+    const button = useRef(new Animated.Value(0)).current
+
+    const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
+
+    /**
+     * Because each of the animations are exact thesame, we created a function that takes in an animatedValue an returns 
+     * styling
+     * This way our we write more clean code.
+     *  */
+     const createAnimationStyle = (animation) => {
+         //we need an interpolation for translateY
+        const translateY = animation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [-5, 0], //we will start the postion of each items slightly higher(-5) and animate to an offset(0)
+        })
+      
+        return {
+          opacity: animation, //we know our Animated.Value is going from 0 to 1, so we can just used that same value for opacity :)
+          transform: [
+            {
+              translateY,
+            },
+          ],
+        }
+    }
+
+    /**FYI: None of the items will be visible, based on the default style because the opacity is 0. 
+     * The items are there bit just not visible. No magic here :)
+     *  */
+    const animatedEmailStyle = createAnimationStyle(email)
+    const animatedPasswordStyle = createAnimationStyle(password)
+    const animatedButtonStyle = createAnimationStyle(button)
+
     return(
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
             <View style={styles.container}>
@@ -26,20 +61,20 @@ export default function StaggerFormItems(){
                     <KeyboardAvoidingView style={styles.form/**command k on macbook to open up the simulator phone keyboard to see this work :)*/} behavior="padding">
                         <View style={styles.container}>
                             <Text style={styles.title}>Login</Text>
-                            <TextInput
-                                style={[styles.input]}
+                            <AnimatedTextInput
+                                style={[styles.input, animatedEmailStyle]}
                                 placeholder="Email"
                                 keyboardType="email-address"
                             />
-                            <TextInput
+                            <AnimatedTextInput
                                 placeholder="Password"
-                                style={[styles.input]}
+                                style={[styles.input, animatedPasswordStyle]}
                                 secureTextEntry
                             />
                             <TouchableOpacity>
-                                <View style={[styles.button]}>
+                                <Animated.View style={[styles.button, animatedButtonStyle]}>
                                     <Text style={styles.buttonText}>Login</Text>
-                                </View>
+                                </Animated.View>
                             </TouchableOpacity>
                         </View>
                     </KeyboardAvoidingView>
