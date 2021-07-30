@@ -41,4 +41,9 @@
 - [https://stackoverflow.com/questions/66788391/react-native-svg-not-rendered-correct](https://stackoverflow.com/questions/66788391/react-native-svg-not-rendered-correct)
 
 
-
+# Animated Techniques that are good to know
+- .99 clif: The .99 cliff is a great way to make animations happen instantly. See [here](https://codedaily.io/courses/Master-React-Native-Animations/99-cliff)
+- Unmounting Animared Components. We implemented in code
+- Interupping a Animation.Values or Many Animation Values: read [here](https://codedaily.io/courses/Master-React-Native-Animations/Interrupted-Animations)
+- Pointer Events: Read here(https://codedaily.io/courses/Master-React-Native-Animations/Pointer-Events)
+Animated Hidden and Inerrupted Animations
