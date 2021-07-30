@@ -47,3 +47,12 @@
 - Interupping a Animation.Values or Many Animation Values: read [here](https://codedaily.io/courses/Master-React-Native-Animations/Interrupted-Animations)
 - Pointer Events: Read here(https://codedaily.io/courses/Master-React-Native-Animations/Pointer-Events)
 Animated Hidden and Inerrupted Animations
+
+# Breaking down 4 Cards animation
+When the box is at rest it stays at the top-left corner.
+- For the box to spring down to the bottom-left corner from rest position, there will be a translateY(positive value) that will happen
+- For the box to go from the bottom-left to the bottom-right, there will be a translateX(positive value) that will happen
+- For the box to go from the bottom-right corner to the top-right corner, there will be a translateY(negative value)
+- For the box to go from the top-right corner back to starting position there will be a translateX(negative value)
+- So we see there is a translateXY to all four corners with a fixed sized box.
+- **Main TakeAway:** It does not matter whatever you are animating, you can always grab a dynamic values of the element, like width and height, XY(to get the position of the element in screen) to control how it moves or how you want to move it across the screen. You can always use onLayout to grab these values, even if it is a flex, there will always be values that you can grab and determine how you want to control your animation dynamically 
