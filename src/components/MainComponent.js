@@ -81,6 +81,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressStaggerFromItemsOpacity = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_stagger_form_items)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -181,6 +188,19 @@ export default function MainComponent(props){
               <Heading3>4 Corners</Heading3>
               <Caption style={styles.description}>When a press on a box, it springs to all the four corners of the screen and back to its original
                point(top-left corner)</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressStaggerFromItemsOpacity}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Stagger Form Items Visibility on Mount</Heading3>
+              <Caption style={styles.description}>There may be times where you want to have an effect on mount. In some cases a subtle hidden
+              - visible effect. This can be applied to many different elements for example google does a slight translate/fade for it's now cards. 
+              We'll apply it to inputs of a login form.</Caption>
             </View>
           </View>
         </TouchableOpacity>

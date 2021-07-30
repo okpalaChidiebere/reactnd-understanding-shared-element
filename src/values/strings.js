@@ -14,4 +14,5 @@ export const Strings = {
     component_animated_svg: "Animate Simple SVG Paths",
     component_unmount_animations: "Animate Hidden",
     component_four_corners: "4 Corners",
+    component_stagger_form_items: "Staggered From Items",
 }

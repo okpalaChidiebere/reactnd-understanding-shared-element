@@ -8,6 +8,7 @@ import PanResponderTest, { PanResponderTestOptions } from "./components/PanRespo
 import SnapChatStoriesComponent, { SnapChatStoriesComponentOptions } from "./components/SnapChatStoriesComponent"
 import SnapChatStoriesDetails from "./components/SnapChatStoriesDetails"
 import StaggeredHeadDrag, { StaggeredHeadDragOptions } from "./components/StaggeredHeadDrag"
+import StaggerFormItems, { StaggerFormItemsOptions } from "./components/StaggerFormItems"
 import UnmountAnimation, { UnmountAnimationOptions } from "./components/UnmountAnimations"
 import XYZReaderComponent, { XYZReaderComponentOptions } from "./components/XYZReaderComponent"
 import XYZReaderDetails, { XYZReaderDetailsOptions } from "./components/XYZReaderDetails"
@@ -81,6 +82,11 @@ const MainNavigator = () => (
       name={Strings.component_four_corners}
       component={FourCorners}
       options={FourCornersOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_stagger_form_items}
+      component={StaggerFormItems}
+      options={StaggerFormItemsOptions}
     />
   </Stack.Navigator>
 )
