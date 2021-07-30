@@ -1,6 +1,7 @@
 import React from "react"
 import { createSharedElementStackNavigator } from "react-navigation-shared-element"
 import AnimatedSvg, { AnimatedSvgOptions } from "./components/AnimatedSvg"
+import FourCorners, { FourCornersOptions } from "./components/FourCorners"
 import KittenCards, { KittenCardsOptions } from "./components/KittenCards"
 import MainComponent, { MainComponentOptions } from "./components/MainComponent"
 import PanResponderTest, { PanResponderTestOptions } from "./components/PanResponderTest"
@@ -75,6 +76,11 @@ const MainNavigator = () => (
       name={Strings.component_unmount_animations}
       component={UnmountAnimation}
       options={UnmountAnimationOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_four_corners}
+      component={FourCorners}
+      options={FourCornersOptions}
     />
   </Stack.Navigator>
 )

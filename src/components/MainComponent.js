@@ -74,6 +74,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPress4Corners = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_four_corners)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -162,6 +169,18 @@ export default function MainComponent(props){
               animations is a crucial part of the user experience. Generally when animations are quick, or they are a single animation the 
               chances of being interrupted is lower. However when dealing with more complex, and longer running animations you don't want 
               to trap the user after they have made a mistake.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPress4Corners}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>4 Corners</Heading3>
+              <Caption style={styles.description}>When a press on a box, it springs to all the four corners of the screen and back to its original
+               point(top-left corner)</Caption>
             </View>
           </View>
         </TouchableOpacity>

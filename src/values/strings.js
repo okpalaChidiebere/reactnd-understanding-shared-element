@@ -12,5 +12,6 @@ export const Strings = {
     component_Kitten_cards: "KittenCards",
     component_staggered_head_drag: "Staggered Head Drag",
     component_animated_svg: "Animate Simple SVG Paths",
-    component_unmount_animations: "Animate Hidden"
+    component_unmount_animations: "Animate Hidden",
+    component_four_corners: "4 Corners",
 }
