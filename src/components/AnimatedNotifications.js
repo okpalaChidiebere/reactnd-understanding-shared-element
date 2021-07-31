@@ -27,9 +27,23 @@ export default function AnimatedNotifications(){
      */
     const notificationRef = useRef()
     const opacity = useRef(new Animated.Value(0)).current
+    /**
+     * We need to control the offset of our notification view. This will always be set 
+     * to the height of the view right before we animate it.
+     */
+    const offset = useRef(new Animated.Value(0)).current
 
     const notificationStyle = {
         opacity,
+        transform: [
+            {
+                /**
+                 * we expect the initial position of this view to be off the screen 
+                 * because we set a negative value offset after measurement of the notification container or wrapper
+                 */
+                translateY: offset,
+            },
+        ],
     }
 
     const handlePress = () => {
@@ -39,7 +53,38 @@ export default function AnimatedNotifications(){
         }))
         //get the dynamic height of our view
         notificationRef.current.measure((x, y, width, height, pageX, pageY) => {
-            console.log(height)
+            /**
+             * multiplying the value by -1 converts the integer to a nagative value :)
+             * 
+             * When we set the offset animation to -height this will move the view on 
+             * the Y axis negatively. Meaning it'll move it up the screen for the amount 
+             * we've set. So in this case it will move it to the exact height of the view 
+             * so it won't be visible. This will make our notification look like it's sliding
+             *  in from off screen.
+             */
+            offset.setValue(height * -1)
+
+            /**
+             * Animated.Parallel allow us to do multiple animations at once. 
+             * For us that means animating in our opacity and our offset.
+             * */
+            Animated.parallel([
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(offset, {
+                    /**
+                     * With our offset originally set at 0, this makes the notification 
+                     * visibly in it's original position. This is why we our doing the 
+                     * Animated.timing animation to 0.
+                     */
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+            ]).start()
         })
     }
 
