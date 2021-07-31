@@ -15,4 +15,5 @@ export const Strings = {
     component_unmount_animations: "Animate Hidden",
     component_four_corners: "4 Corners",
     component_stagger_form_items: "Staggered From Items",
+    component_progress_bar_button: "Animated Progress Bar Button",
 }

@@ -5,6 +5,7 @@ import FourCorners, { FourCornersOptions } from "./components/FourCorners"
 import KittenCards, { KittenCardsOptions } from "./components/KittenCards"
 import MainComponent, { MainComponentOptions } from "./components/MainComponent"
 import PanResponderTest, { PanResponderTestOptions } from "./components/PanResponderTest"
+import ProgressbarButton, { ProgressbarButtonOptions } from "./components/ProgressbarButton"
 import SnapChatStoriesComponent, { SnapChatStoriesComponentOptions } from "./components/SnapChatStoriesComponent"
 import SnapChatStoriesDetails from "./components/SnapChatStoriesDetails"
 import StaggeredHeadDrag, { StaggeredHeadDragOptions } from "./components/StaggeredHeadDrag"
@@ -87,6 +88,11 @@ const MainNavigator = () => (
       name={Strings.component_stagger_form_items}
       component={StaggerFormItems}
       options={StaggerFormItemsOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_progress_bar_button}
+      component={ProgressbarButton}
+      options={ProgressbarButtonOptions}
     />
   </Stack.Navigator>
 )

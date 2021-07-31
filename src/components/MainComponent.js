@@ -88,6 +88,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressProgressBarButton = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_progress_bar_button)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -201,6 +208,18 @@ export default function MainComponent(props){
               <Caption style={styles.description}>There may be times where you want to have an effect on mount. In some cases a subtle hidden
               - visible effect. This can be applied to many different elements for example google does a slight translate/fade for it's now cards. 
               We'll apply it to inputs of a login form.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressProgressBarButton}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Animated Progress Bar Button</Heading3>
+              <Caption style={styles.description}>This is nothing unique to this tutorial but demonstrates a decent animation. 
+              It provides the user with instant feedback and localized to the action that they took.</Caption>
             </View>
           </View>
         </TouchableOpacity>
