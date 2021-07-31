@@ -1,5 +1,6 @@
 import React from "react"
 import { createSharedElementStackNavigator } from "react-navigation-shared-element"
+import AnimatedNotifications, { AnimatedNotificationsOptions } from "./components/AnimatedNotifications"
 import AnimatedSvg, { AnimatedSvgOptions } from "./components/AnimatedSvg"
 import FourCorners, { FourCornersOptions } from "./components/FourCorners"
 import KittenCards, { KittenCardsOptions } from "./components/KittenCards"
@@ -93,6 +94,11 @@ const MainNavigator = () => (
       name={Strings.component_progress_bar_button}
       component={ProgressbarButton}
       options={ProgressbarButtonOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_animated_notifications}
+      component={AnimatedNotifications}
+      options={AnimatedNotificationsOptions}
     />
   </Stack.Navigator>
 )

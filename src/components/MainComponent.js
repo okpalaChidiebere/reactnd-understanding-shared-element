@@ -95,6 +95,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressDynamicNotifications = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_animated_notifications)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -220,6 +227,20 @@ export default function MainComponent(props){
               <Heading3>Animated Progress Bar Button</Heading3>
               <Caption style={styles.description}>This is nothing unique to this tutorial but demonstrates a decent animation. 
               It provides the user with instant feedback and localized to the action that they took.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressDynamicNotifications}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Dynamic Animated Notifications</Heading3>
+              <Caption style={styles.description}>Adding a system for errors, and notifications to your app is crucial. 
+              It provides valuable feedback so your users can stay informed, and take necessary actions. React Native 
+              makes it easy to build a notification view that can be dynamically sized and animate so that feedback 
+              isn't jarring.</Caption>
             </View>
           </View>
         </TouchableOpacity>
