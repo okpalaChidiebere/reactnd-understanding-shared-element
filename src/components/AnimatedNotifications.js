@@ -37,6 +37,10 @@ export default function AnimatedNotifications(){
             value: "",
             notification: currState.value,
         }))
+        //get the dynamic height of our view
+        notificationRef.current.measure((x, y, width, height, pageX, pageY) => {
+            console.log(height)
+        })
     }
 
     const { value, notification } = state 
