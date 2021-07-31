@@ -64,3 +64,10 @@ Common Animation that occurs are onMount animations. These are animation that ha
 - We could use an interpolation for each of the form items, but we choose to set it up as each individual animated value so that we can use stagger. 
 - There will be an interpolation of zero to one that offsets each item position to about 5 and then transitions in. We will set position of items using layouts and we will setValues that will offset the position to begin and then will animate it back in to the normal position. This is best because we don't have to use delay to control the positioning of the items. We let the layout take effect and we use the translates to offset it correctly.
 - **Takeaway:** Even though the duration of the animations have thesame, Because of the stagger they will all link up together perspectively. This is good useful for implementing Coordinated Motions, Chaotic Motions on ListItems. You can use this library [react-native-animatable](https://github.com/oblador/react-native-animatable) but i think you can do it without the library :)
+
+# Animated Progress Bar Button Breakdown
+- There is an animation that takes place in the background of a buttonView. The animtion is btwetween the buttonText and the background of the view.
+- There is a single animated value that will animate from 0 to 1. 
+- We have a animatedView in the background have an absolute position of top, bottom, and left of 0 and we interpolate the width until it fill out the parent. So we go by percentage interpolation of the width
+- At the very end of the aniation of the view, it fades out. We will add a secondary animation for this
+- So we end up having two animated values, one for the backgroud-color and the widht, and the second for the opacity(resposible for the fade out the progressBar)
