@@ -26,6 +26,11 @@ export default function AnimatedNotifications(){
      * a specific height.
      */
     const notificationRef = useRef()
+    const opacity = useRef(new Animated.Value(0)).current
+
+    const notificationStyle = {
+        opacity,
+    }
 
     const handlePress = () => {
         setState(currState => ({
@@ -39,7 +44,7 @@ export default function AnimatedNotifications(){
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
             <Animated.View
-                style={[styles.notification]}
+                style={[styles.notification, notificationStyle]}
                 ref={notificationRef}
             >
                 <Text style={styles.notificationText}>{notification}</Text>
