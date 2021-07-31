@@ -65,25 +65,53 @@ export default function AnimatedNotifications(){
             offset.setValue(height * -1)
 
             /**
-             * Animated.Parallel allow us to do multiple animations at once. 
-             * For us that means animating in our opacity and our offset.
-             * */
-            Animated.parallel([
-                Animated.timing(opacity, {
-                    toValue: 1,
-                    duration: 300,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(offset, {
-                    /**
-                     * With our offset originally set at 0, this makes the notification 
-                     * visibly in it's original position. This is why we our doing the 
-                     * Animated.timing animation to 0.
-                     */
-                    toValue: 0,
-                    duration: 300,
-                    useNativeDriver: true,
-                }),
+            * Animated.Parallel allow us to do multiple animations at once. 
+            * For us that means animating in our opacity and our offset.
+            * */
+            const animateIn = Animated.parallel([
+                    Animated.timing(opacity, {
+                        toValue: 1,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(offset, {
+                        /**
+                            * With our offset originally set at 0, this makes the notification 
+                            * visibly in it's original position. This is why we our doing the 
+                            * Animated.timing animation to 0.
+                            */
+                        toValue: 0,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }),
+                ])
+
+            /**
+             * animateOut is basically reverse of animateIn
+             */
+            const animateOut = Animated.parallel([
+                    Animated.timing(opacity, {
+                        toValue: 0,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(offset, {
+                        toValue: height * -1,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }),
+                ])
+
+            /**
+             * We want these 2 animations to happen in sequence, so we will 
+             * need to use the Animated.sequence command to combine them. 
+             * Additionally so our user can see the notification we'll use 
+             * Animated.delay to wait before moving on to the hide animation.
+            */
+            Animated.sequence([
+                animateIn,
+                Animated.delay(1500),
+                animateOut,
             ]).start()
         })
     }
