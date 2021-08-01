@@ -18,4 +18,5 @@ export const Strings = {
     component_progress_bar_button: "Animated Progress Bar Button",
     component_animated_notifications: "Dynamic Animated Notifications",
     component_animated_questionare: "Animated Questionare",
+    component_custom_shared_element: "Photo Grid Custom Shared Element"
 }

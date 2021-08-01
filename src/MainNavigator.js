@@ -7,6 +7,7 @@ import FourCorners, { FourCornersOptions } from "./components/FourCorners"
 import KittenCards, { KittenCardsOptions } from "./components/KittenCards"
 import MainComponent, { MainComponentOptions } from "./components/MainComponent"
 import PanResponderTest, { PanResponderTestOptions } from "./components/PanResponderTest"
+import PhotoGridSharedElement, { PhotoGridSharedElementOptions } from "./components/PhotoGridSharedElement"
 import ProgressbarButton, { ProgressbarButtonOptions } from "./components/ProgressbarButton"
 import SnapChatStoriesComponent, { SnapChatStoriesComponentOptions } from "./components/SnapChatStoriesComponent"
 import SnapChatStoriesDetails from "./components/SnapChatStoriesDetails"
@@ -105,6 +106,11 @@ const MainNavigator = () => (
       name={Strings.component_animated_questionare}
       component={AnimatedQuestionnaire}
       options={AnimatedQuestionnaireOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_custom_shared_element}
+      component={PhotoGridSharedElement}
+      options={PhotoGridSharedElementOptions}
     />
   </Stack.Navigator>
 )

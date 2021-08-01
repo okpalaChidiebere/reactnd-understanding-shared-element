@@ -109,6 +109,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressCustomSharedElement = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_custom_shared_element)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -262,6 +269,19 @@ export default function MainComponent(props){
                it look like we have a smooth rendering of items. It is less than ideal to render hundreds of items. We'll 
                use something that I may consider a layout hack + a setState swap. Essentially animating an item to where 
                it will appear on the next state.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressCustomSharedElement}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Photo Grid Shared Element</Heading3>
+              <Caption style={styles.description}>We learn a techinique to do Shard element transitioning using width, 
+              height and absolute positioning. This is one method you can do this, but there is other method out there
+               as well. We are trasitioning elements in thesame screen and not across screens with navigations</Caption>
             </View>
           </View>
         </TouchableOpacity>
