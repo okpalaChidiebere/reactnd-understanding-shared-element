@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import {
   StyleSheet,
   Text,
@@ -22,20 +22,73 @@ const initialState = {
 
 export default function AnimatedQuestionnaire(){
     const [state, setState] = useState(initialState)
+    const animation  = useRef(new Animated.Value(0)).current
 
-    const handleAnswer = () => {}
+    const handleAnswer = () => {
+        Animated.timing(animation, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true
+        }).start(() => {
+            /**
+             * Pro tip: it is important to know how to use animated 
+             * callbacks that animated provides as it allows us to setup and adjust our animations
+             * an prepare for new animation
+             */
 
-    /** we will render the question at index 0 at the first question, 
+            //transitioning the index as well once the animation is done.
+            setState(currState => ({
+                ...currState,
+                index: currState.index + 1, //this causes the next question to be the main question and we have new next question
+            }))
+            animation.setValue(0) //we dont wnt want the next question to be translated offscreen as its not the main question
+        })
+    }
+
+    const { questions, index } = state
+
+    const { width } = Dimensions.get("window")
+
+    /** we will have our mainQuestion sit at 0, and when our animation happens, we will move it to the left */
+    const mainQuestionInterpolate = animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, -width]
+    })
+
+    /** 
+     * we will have then next question sit offSet in screen and move the it into 0 as the 
+     * question asnwered moves off. */
+    const nextQuestionInterpolate = animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [width, 0]
+    })
+
+    //craft our styling
+    const animatedMainQuestionStyle = {
+        transform: [
+            {
+                //rememeber, translateX is responsible for moving objects left to right on screen
+                translateX: mainQuestionInterpolate,
+            }
+        ]
+    }
+
+    const animatedNextQuestionStyle = {
+        transform: [
+            {
+                translateX: nextQuestionInterpolate,
+            }
+        ]
+    }
+    //end crafting our styling
+
+    /** 
+     * we will render the question at index 0 at the first question, 
      * and the second question (index 1) that will sit offscreen that 
      * can translate in at thesame time we translate out the first question
      * */
-
-    
-
-    const { questions, index } = state
     const question = questions[index]
     let nextQuestion
-
     //if the next question is inside our array
     if(index + 1 < questions.length){
         //we get the next question
@@ -52,10 +105,10 @@ export default function AnimatedQuestionnaire(){
                         styles.overlay //centres the two questions in the middle of the screen
                     ]}
                 >
-                    <Animated.Text style={[styles.questionText]}>
+                    <Animated.Text style={[styles.questionText, animatedMainQuestionStyle]}>
                         {question}
                     </Animated.Text>
-                    <Animated.Text style={[styles.questionText]}>
+                    <Animated.Text style={[styles.questionText, animatedNextQuestionStyle]}>
                         {nextQuestion}
                     </Animated.Text>
                 </View>
