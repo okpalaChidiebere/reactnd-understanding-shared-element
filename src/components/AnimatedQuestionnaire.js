@@ -23,13 +23,21 @@ const initialState = {
 export default function AnimatedQuestionnaire(){
     const [state, setState] = useState(initialState)
     const animation  = useRef(new Animated.Value(0)).current
+    const progress = useRef(new Animated.Value(0)).current
 
     const handleAnswer = () => {
-        Animated.timing(animation, {
-            toValue: 1,
-            duration: 400,
-            useNativeDriver: true
-        }).start(() => {
+        Animated.parallel([
+            Animated.timing(progress, {
+              toValue: state.index + 1, //the input to our progress should be the current question we are on. remember that the inputRange for this animation is dynamic to questions.length :)
+              duration: 400,
+              useNativeDriver: false //you can only animate the widht property with javascript
+            }),
+            Animated.timing(animation, {
+                toValue: 1,
+                duration: 400,
+                useNativeDriver: true
+            }),
+          ]).start(() => {
             /**
              * Pro tip: it is important to know how to use animated 
              * callbacks that animated provides as it allows us to setup and adjust our animations
@@ -48,6 +56,20 @@ export default function AnimatedQuestionnaire(){
     const { questions, index } = state
 
     const { width } = Dimensions.get("window")
+
+    /**
+     * This interpolation for our progress, we figured out based on the number of questions that we have, 
+     * what percentage we need to have so that it will progress appropriately across the screen when a new
+     * question is answered
+     */
+    const progressInterpolate = progress.interpolate({
+        inputRange: [0, questions.length], //the end inputRange is dynamic which is how many questions based on the state
+        outputRange: ["0%", "100%"],
+    })
+
+    const animatedProgressStyle = {
+        width: progressInterpolate
+    }
 
     /** we will have our mainQuestion sit at 0, and when our animation happens, we will move it to the left */
     const mainQuestionInterpolate = animation.interpolate({
@@ -112,6 +134,9 @@ export default function AnimatedQuestionnaire(){
                         {nextQuestion}
                     </Animated.Text>
                 </View>
+                <View style={styles.progress}>
+                    <Animated.View style={[styles.bar, animatedProgressStyle]} />
+                </View>
                 <TouchableOpacity 
                     /**
                      * TIP: TouchableOpacity is actually an Animated.View so that means 
@@ -171,6 +196,17 @@ const styles = StyleSheet.create({
         color: "#FFF",
         textAlign: "center",
         position: "absolute", //We want the layout of the questions to be independent so that we can position then how we fill
+    },
+    progress: {
+        position: "absolute",
+        left: 0,
+        bottom: 0,
+        right: 0,
+        height: 10,
+    },
+    bar: {
+        height: "100%",
+        backgroundColor: "#FFF",
     },
 })
 
