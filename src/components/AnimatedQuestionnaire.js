@@ -25,9 +25,40 @@ export default function AnimatedQuestionnaire(){
 
     const handleAnswer = () => {}
 
+    /** we will render the question at index 0 at the first question, 
+     * and the second question (index 1) that will sit offscreen that 
+     * can translate in at thesame time we translate out the first question
+     * */
+
+    
+
+    const { questions, index } = state
+    const question = questions[index]
+    let nextQuestion
+
+    //if the next question is inside our array
+    if(index + 1 < questions.length){
+        //we get the next question
+        nextQuestion = questions[index + 1]
+    }
+
+    
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
             <View style={styles.content}>
+                <View 
+                    style={[
+                        StyleSheet.absoluteFill, /** we need this view that will render the qustions to operate independently. it should vover the entire container as well */
+                        styles.overlay //centres the two questions in the middle of the screen
+                    ]}
+                >
+                    <Animated.Text style={[styles.questionText]}>
+                        {question}
+                    </Animated.Text>
+                    <Animated.Text style={[styles.questionText]}>
+                        {nextQuestion}
+                    </Animated.Text>
+                </View>
                 <TouchableOpacity 
                     /**
                      * TIP: TouchableOpacity is actually an Animated.View so that means 
@@ -71,6 +102,22 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: "#FFF",
         marginBottom: 50,
+    },
+    overlay: {
+        /** 
+         * we want to center our question in the middle of the screen and they have to be on thesame plane
+         * This means, as we anmiate the next question in, it needs to be in exact same stop that the question
+         *  being animated out left. To achieve this, we have to do some absolute positioning (look at styles.questionText) to make the items 
+         * flow correctly
+         */
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    questionText: {
+        fontSize: 30,
+        color: "#FFF",
+        textAlign: "center",
+        position: "absolute", //We want the layout of the questions to be independent so that we can position then how we fill
     },
 })
 
