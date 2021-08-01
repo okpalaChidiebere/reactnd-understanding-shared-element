@@ -71,3 +71,11 @@ Common Animation that occurs are onMount animations. These are animation that ha
 - We have a animatedView in the background have an absolute position of top, bottom, and left of 0 and we interpolate the width until it fill out the parent. So we go by percentage interpolation of the width
 - At the very end of the aniation of the view, it fades out. We will add a secondary animation for this
 - So we end up having two animated values, one for the backgroud-color and the widht, and the second for the opacity(resposible for the fade out the progressBar)
+
+# Animated Questionnaire with Progress Bar
+- When we press on any of the sides, we animate one question out and another question in. Additionally, a progress bar happens at the bottom of the page. 
+- There is a translateY happening and responsible for the question sliding in and out. As one translateY goes out from the left, another translateY slides in from the right.
+- As Swap happens when next question translates in. The next question to answer is always off the screen positioned at the right. So as the current question being answered translates off the screen, we translate in the next question in and then a swap happens at the center of the screen. Then we get the next question ready at the right side of the page off the screen.
+- The progressBar is just interpolating its width length off of the number of question asked. The progressBar will have its own animatedValue with interpolation.
+- When we press X icon at the top right of the screen, all the animations just reset instantly
+- We got this animation idea from [here](https://dribbble.com/shots/3277162-Questionaire) and an easy way to check out the breakdown of that animation is to save the image(animation images are in gif formats) on your local machine, open the image up in Preview, the you will see all the gif, frame by frame. You can step through the frames and see the transitions that are happening. You dont have to look at all the frames but for each frame you can see what exactly is happening and what sort of effects you need to re-create.

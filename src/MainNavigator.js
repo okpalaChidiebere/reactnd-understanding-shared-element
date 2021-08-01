@@ -1,6 +1,7 @@
 import React from "react"
 import { createSharedElementStackNavigator } from "react-navigation-shared-element"
 import AnimatedNotifications, { AnimatedNotificationsOptions } from "./components/AnimatedNotifications"
+import AnimatedQuestionnaire, { AnimatedQuestionnaireOptions } from "./components/AnimatedQuestionnaire"
 import AnimatedSvg, { AnimatedSvgOptions } from "./components/AnimatedSvg"
 import FourCorners, { FourCornersOptions } from "./components/FourCorners"
 import KittenCards, { KittenCardsOptions } from "./components/KittenCards"
@@ -99,6 +100,11 @@ const MainNavigator = () => (
       name={Strings.component_animated_notifications}
       component={AnimatedNotifications}
       options={AnimatedNotificationsOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_animated_questionare}
+      component={AnimatedQuestionnaire}
+      options={AnimatedQuestionnaireOptions}
     />
   </Stack.Navigator>
 )

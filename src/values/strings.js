@@ -17,4 +17,5 @@ export const Strings = {
     component_stagger_form_items: "Staggered From Items",
     component_progress_bar_button: "Animated Progress Bar Button",
     component_animated_notifications: "Dynamic Animated Notifications",
+    component_animated_questionare: "Animated Questionare",
 }

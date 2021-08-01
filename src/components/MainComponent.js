@@ -102,6 +102,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressAnimatedQuestionare = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_animated_questionare)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -241,6 +248,20 @@ export default function MainComponent(props){
               It provides valuable feedback so your users can stay informed, and take necessary actions. React Native 
               makes it easy to build a notification view that can be dynamically sized and animate so that feedback 
               isn't jarring.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressAnimatedQuestionare}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Animated Questionnaire with Progress Bar</Heading3>
+              <Caption style={styles.description}>This demo is going to show how we can use state and animations to make
+               it look like we have a smooth rendering of items. It is less than ideal to render hundreds of items. We'll 
+               use something that I may consider a layout hack + a setState swap. Essentially animating an item to where 
+               it will appear on the next state.</Caption>
             </View>
           </View>
         </TouchableOpacity>
