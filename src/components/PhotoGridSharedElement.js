@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useRef, useState } from "react"
 import {
   StyleSheet,
   Text,
@@ -13,7 +13,12 @@ import { Colors, Strings } from "../values"
 
 import Heroes from "../assets/avatars/Heroes"
 
+const initialState = {
+    activeImage: null, 
+}
 export default function PhotoGridSharedElement({ }){
+
+    const [state, setState] = useState(initialState)
 
     /** 
      * we want to save all the references to all images in the grid
@@ -24,6 +29,7 @@ export default function PhotoGridSharedElement({ }){
      * With the help of refs we can do that
     */
     const gridImages = useRef([])
+    const viewImage = useRef()
 
     /**
      * 
@@ -31,6 +37,8 @@ export default function PhotoGridSharedElement({ }){
      * can do our measurements and transition for that particular image
      */
     const handleOpenImage = (index) => {}
+
+    const { activeImage } = state
 
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
@@ -58,6 +66,44 @@ export default function PhotoGridSharedElement({ }){
                         }
                     </View>
                 </ScrollView>
+                <View
+                    style={StyleSheet.absoluteFill /** we render this view over the top of the scrollView*/}
+                    pointerEvents={activeImage ? "auto" : "none"}
+                >
+                    <View
+                        style={styles.imageDetailsTopContent} 
+                        ref={viewImage /** we want to measure this container wrapping our image because when 
+                        you swlwct an image in the grid, we will dynamically measure the element that you pressed 
+                        and receive a callback with its positioning, then we will get the measurements of this wrapper 
+                        view where the image will be, and we are going to set the imageProperties (like width, height 
+                        and coordinates of that image) in to this wrapper to be that of measurements for the one we pressed in the grid. */}
+                    >
+                        <Animated.Image
+                        key={activeImage /** helps clear out the cache each time we have a new active image or not */}
+                        source={activeImage /** we set the image selected from our state. Starting at null, means the space for the image will be allocated but it will be transparent */}
+                        resizeMode="cover" /** it is important we have matching resizeModes if we want the image transition to be smooth from the gird to this view */
+                        style={[styles.viewImage]}
+                        />
+                    </View>
+                    <Animated.View
+                        /** we will transition the image content in as well when the image is selected */
+                        style={[styles.imageDetailsContent]}
+                        ref={(content) => (this._content = content)}
+                    >
+                        <Text style={styles.title}>Pretty Image from Unsplash</Text>
+                        <Text>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lobortis
+                        interdum porttitor. Nam lorem justo, aliquam id feugiat quis, malesuada
+                        sit amet massa. Sed fringilla lorem sit amet metus convallis, et vulputate
+                        mauris convallis. Donec venenatis tincidunt elit, sed molestie massa.
+                        Fusce scelerisque nulla vitae mollis lobortis. Ut bibendum risus ac rutrum
+                        lacinia. Proin vel viverra tellus, et venenatis massa. Maecenas ac gravida
+                        purus, in porttitor nulla. Integer vitae dui tincidunt, blandit felis eu,
+                        fermentum lorem. Mauris condimentum, lorem id convallis fringilla, purus
+                        orci viverra metus, eget finibus neque turpis sed turpis.
+                        </Text>
+                    </Animated.View>
+                </View>
             </View>
         </SafeAreaView>
     )
@@ -74,6 +120,25 @@ const styles = StyleSheet.create({
     gridImage: {
         width: "33%", //we want our images to be three per row
         height: 150, //ideally, you will want to calculate this based upon screen size
+    },
+    //the container we are measuring (Image wrapper)
+    imageDetailsTopContent: {
+        flex: 1,
+    },
+    imageDetailsContent: {
+        flex: 2, //takes twice much space as the topImage wrapper
+        backgroundColor: "#fff",
+    },
+    viewImage: {
+        /** NOTE: we will be manipulating the width and height later thats why they are null */
+        width: null,
+        height: null,
+        position:"absolute",
+        top: 0,
+        left: 0,
+    },
+    title: {
+        fontSize: 28,
     },
 })
 
