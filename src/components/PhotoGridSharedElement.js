@@ -151,6 +151,16 @@ export default function PhotoGridSharedElement({ }){
     }
     /** end rendering shared item to appear on thesame spot */
 
+    /**
+     * We had to animate the opacity of the button because the whole modalView itself is not animated with opacity 
+     * only the texts in the modal view is
+     * 
+     * we dont want this button to appear when he transition has not happend yet
+     */
+    const animatedCloseButtonStyle = {
+        opacity: animation,
+    }
+
     const { activeImage, activeIndex } = state
 
     return (
@@ -223,6 +233,11 @@ export default function PhotoGridSharedElement({ }){
                         orci viverra metus, eget finibus neque turpis sed turpis.
                         </Text>
                     </Animated.View>
+                    <TouchableWithoutFeedback>
+                        <Animated.View style={[styles.close, animatedCloseButtonStyle]}>
+                            <Text style={styles.closeText}>X</Text>
+                        </Animated.View>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
         </SafeAreaView>
@@ -259,6 +274,16 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 28,
+    },
+    close: {
+        position: "absolute",
+        top: 20,
+        right: 20
+    },
+    closeText: {
+        backgroundColor: "transparent",
+        fontSize: 28,
+        color: "#fff",
     },
 })
 
