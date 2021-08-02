@@ -94,3 +94,8 @@ There is another method without a wrapping container:
 - Set animated values with the values of the start item
 - Animate the animated values to final destination
 This works well for images, however there are cases where you want to do text, etc. This gets even more complicated but is still possible. The simple naive solution that a lot of people use is to snapshot a view (turn it into an image), and then morph it to it's destination and then swap in the actual content.
+
+# Animated Color Picker 
+- Takeaway is have all the layout set out for the view first, then start to revese each piece of effect at a time until you have the animation that you desired for and use pointer events when you need to
+- This animation is inspred by [Nick Frost](https://dribbble.com/shots/2229372)
+- Breakdown of the animation [here](https://codedaily.io/courses/Master-React-Native-Animations/Animated-Color-Picker-Breakdown)

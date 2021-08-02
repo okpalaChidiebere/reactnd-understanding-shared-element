@@ -64,6 +64,8 @@ export default function AnimatedColorPicker({ }){
         }).start()
       
         setState(currstate => ({ ...currstate, inputOpen: !currstate.inputOpen }))
+        //we want to show of blur focus on the textInput field causing the keyboard to open or close
+        state.inputOpen ? inputViewText.current.blur() : inputViewText.current.focus()
     }
 
     /**
@@ -133,6 +135,44 @@ export default function AnimatedColorPicker({ }){
     }
     /** END INPUT VIEW ANIMATION */
 
+    /** START ACTION VIEW ANIMATION
+     * 
+     * **Rememeber that we are animating the elements(AnimatedIcons) in inside the actionView itself
+     * and not hiding the whole view itself
+     * 
+     * We are hidding the items in one view while revealing the items in another view and also controling 
+     * the pointer events of the inputView that is on top of the actionView. This way we know when to allow 
+     * the actionItems to be interactable with or not
+     * 
+     */
+    const actionItemsIconTranslate = okButtonAnimation.interpolate({
+        inputRange: [0, 1],
+        /**
+         * we wan to move the button a bit in the opposite direction that the ok button is moving
+         * 
+         * 
+         * This movement effect makes it look like the okButton and the actionItems icons are swapping places
+         */
+        outputRange: [0, -20],
+    })
+      
+    //interpolation for the opacity of the icons as well. We will hide the icons in the actionView very quicky
+    const opacityIconInterpolate = okButtonAnimation.interpolate({
+        inputRange: [0, 0.2],
+        outputRange: [1, 0], //the icons will be visible when the okButton is closed and hidden if the okButton is opening
+        extrapolate: "clamp",
+    })
+      
+    const iconStyle = {
+        opacity: opacityIconInterpolate,
+        transform: [
+          {
+            translateX: actionItemsIconTranslate,
+          },
+        ],
+    }
+    /** END ACTION VIEW ANIMATION */
+
     const { color, inputOpen } = state
 
     /** we want the background color of the colorAction button to be driven off our state */
@@ -149,24 +189,26 @@ export default function AnimatedColorPicker({ }){
                     </TouchableWithoutFeedback>
                     <View style={styles.row}>
                         <TouchableOpacity>
-                            <AnimatedIcon name="bold" size={30} color="#555" />
+                            <AnimatedIcon name="bold" size={30} color="#555" style={iconStyle} />
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <AnimatedIcon name="italic" size={30} color="#555" />
+                            <AnimatedIcon name="italic" size={30} color="#555"  style={iconStyle} />
                         </TouchableOpacity>
                         <TouchableOpacity>
                             <AnimatedIcon
                                 name="align-center"
                                 size={30}
                                 color="#555"
+                                style={iconStyle}
                             />
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <AnimatedIcon name="link" size={30} color="#555" />
+                            <AnimatedIcon name="link" size={30} color="#555" style={iconStyle} />
                         </TouchableOpacity>
 
                         <Animated.View /** The inputView position on top of the actionView( with actionIcons) */
                             style={[StyleSheet.absoluteFill, styles.colorRowWrap]}
+                            pointerEvents={inputOpen ? "auto" : "none" /**control the pointer events on this view. When it is none, it means that the okutton is hidden and we can interact with the actionItem icons */}
                         >
                             <AnimatedTextInput
                                 value={color}
@@ -174,7 +216,7 @@ export default function AnimatedColorPicker({ }){
                                 onChangeText={(color) => setState(currstate => ({ ...currstate, color }))}
                                 ref={inputViewText}
                             />
-                            <TouchableWithoutFeedback /*onPress={this.toggleInput}*/>
+                            <TouchableWithoutFeedback onPress={toggleInput /**Ok button can be toggled just like colorBall */}>
                                 <Animated.View style={[styles.okayButton, animatedOkButtonStyle]}>
                                     <Text style={styles.okayText}>OK</Text>
                                 </Animated.View>
