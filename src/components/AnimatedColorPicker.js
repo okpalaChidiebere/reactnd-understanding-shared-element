@@ -40,8 +40,54 @@ export default function AnimatedColorPicker({ }){
      * and that seems reversable
      */
     const buttonAnimation = useRef(new Animated.Value(0)).current //drive open and close animation of the color input view when the color button is clicked from the actionView
+    const openTextEditor = useRef() //we dont care if the textEditor unmounts in this projects so we will not put the value in our state
 
-    const handleToggle = () => {}
+    const handleToggle = () => {
+        const toValue = openTextEditor.current ? 0 : 1
+
+        Animated.spring(animation, {
+            toValue,
+            useNativeDriver: true,
+        }).start()
+
+        openTextEditor.current = !openTextEditor.current
+    }
+
+    /**
+     * START TEXT EDITOR ANIMATION
+     * 
+     * We will run the animation that opens the text Editor as a whole with interpolation
+     * This means that this animation can be reversable
+     * 
+     * We want to have the effect where the textEditor explodes upwards and outwards when
+     * the text is clicked
+     *  */
+
+    /**This explodes the textEditor upwards to its position */
+    const translateYInterpolate = animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [125, 0] //at rest, we push the editors downwards (125) a bit the move it up to the rest position (0)
+    })
+    /** This makes the textEditor this explodes the textEditor outwards */
+    const scaleXInteroplate = animation.interpolate({
+        inputRange: [0, .5, 1],
+        outputRange: [0, 0, 1]
+    })
+    const animatedTextEditorStyle = {
+        opacity: animation,
+        transform: [
+            {
+                translateY: translateYInterpolate
+            },
+            {
+                scaleX: scaleXInteroplate, //scales the editor along the x axis
+            },
+            {
+                scaleY: animation //scales the editor along the Y axis.
+            }
+        ]
+    }
+    /**END TEXT EDITOR ANIMATION */
 
     const { color, inputOpen } = state
 
@@ -53,7 +99,7 @@ export default function AnimatedColorPicker({ }){
     return (
         <SafeAreaView style={styles.containerOutter} edges={["bottom", "left", "right"]}>
             <View style={styles.containerInner}>
-                <Animated.View style={styles.rowWrap} /**this is a wrapping view */>
+                <Animated.View style={[styles.rowWrap, animatedTextEditorStyle]} /**this is a wrapping view */>
                     <TouchableWithoutFeedback>
                         <Animated.View style={[styles.colorBall, colorStyle]}/>
                     </TouchableWithoutFeedback>
