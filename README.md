@@ -79,3 +79,18 @@ Common Animation that occurs are onMount animations. These are animation that ha
 - The progressBar is just interpolating its width length off of the number of question asked. The progressBar will have its own animatedValue with interpolation.
 - When we press X icon at the top right of the screen, all the animations just reset instantly
 - We got this animation idea from [here](https://dribbble.com/shots/3277162-Questionaire) and an easy way to check out the breakdown of that animation is to save the image(animation images are in gif formats) on your local machine, open the image up in Preview, the you will see all the gif, frame by frame. You can step through the frames and see the transitions that are happening. You dont have to look at all the frames but for each frame you can see what exactly is happening and what sort of effects you need to re-create.
+
+# Photo Grid Shared Element
+The shared element idea is a multi stage process, but it follows a general guideline.
+- Get the position of the item (width/height/x/y)
+- Set animated values with those values
+- Render shared item using animated values so it appears in the same spot as our start item
+- Get the destination dimensions (width/height/x/y) (wrapping container positions)
+Animate the animated values to final destination
+There is another method without a wrapping container: 
+- Get the position/size of the item (width/height/x/y)
+- Render destination item hidden with opacity
+- Get the position/size of the destination item (width/height/x/y)
+- Set animated values with the values of the start item
+- Animate the animated values to final destination
+This works well for images, however there are cases where you want to do text, etc. This gets even more complicated but is still possible. The simple naive solution that a lot of people use is to snapshot a view (turn it into an image), and then morph it to it's destination and then swap in the actual content.
