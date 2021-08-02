@@ -39,7 +39,8 @@ export default function AnimatedColorPicker({ }){
      * There was a second open and close view with the input(where you put the color) and the button
      * and that seems reversable
      */
-    const buttonAnimation = useRef(new Animated.Value(0)).current //drive open and close animation of the color input view when the color button is clicked from the actionView
+    const okButtonAnimation = useRef(new Animated.Value(0)).current //drive open and close animation of the color input view when the color button is clicked from the actionView
+    const inputViewText = useRef() //we want to be able to control the focus of the inputText
     const openTextEditor = useRef() //we dont care if the textEditor unmounts in this projects so we will not put the value in our state
 
     const handleToggle = () => {
@@ -51,6 +52,18 @@ export default function AnimatedColorPicker({ }){
         }).start()
 
         openTextEditor.current = !openTextEditor.current
+    }
+
+    /** when the color icon is togged, we will  */
+    const toggleInput = () => {
+        const toValue = state.inputOpen ? 0 : 1;
+        Animated.timing(okButtonAnimation, {
+          toValue,
+          duration: 350,
+          useNativeDriver: true
+        }).start()
+      
+        setState(currstate => ({ ...currstate, inputOpen: !currstate.inputOpen }))
     }
 
     /**
@@ -89,6 +102,37 @@ export default function AnimatedColorPicker({ }){
     }
     /**END TEXT EDITOR ANIMATION */
 
+    /** START INPUT VIEW ANIMATION */
+    /** we want to move the OK button in the inputView from the left(offest position) at start to it normal postion which is right end of the inputView  */
+    const moveInterpoate = okButtonAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [-150, 0]
+    })
+
+    //we want to reveal the TextInput right about then the OK button is about to reach its final positon
+    const inputTextOpacityInterpolate = okButtonAnimation.interpolate({
+        inputRange: [0, .8, 1], 
+        outputRange: [0, 0, 1] //the inputText will be hidden for about 80% of the animation and will quickly appear
+    })
+
+    //As we move the okButton from left to right, we increase the scale as well and vice-visa
+    const animatedOkButtonStyle = {
+        transform: [
+            {
+                translateX: moveInterpoate //we want to squeeze the width of this view and then release the with to it normal size kater
+            },
+            {
+                scale: okButtonAnimation //we want to make the view small and scale out to its normal size from 0 to 1. when at 0, the button is non-exisitent because the scale is 0. You can see it :)
+            }
+        ]
+    }
+
+    //opacity animatin for the textInput
+    const animatedInputTextStyle = {
+        opacity: inputTextOpacityInterpolate
+    }
+    /** END INPUT VIEW ANIMATION */
+
     const { color, inputOpen } = state
 
     /** we want the background color of the colorAction button to be driven off our state */
@@ -100,7 +144,7 @@ export default function AnimatedColorPicker({ }){
         <SafeAreaView style={styles.containerOutter} edges={["bottom", "left", "right"]}>
             <View style={styles.containerInner}>
                 <Animated.View style={[styles.rowWrap, animatedTextEditorStyle]} /**this is a wrapping view */>
-                    <TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={toggleInput}>
                         <Animated.View style={[styles.colorBall, colorStyle]}/>
                     </TouchableWithoutFeedback>
                     <View style={styles.row}>
@@ -126,11 +170,12 @@ export default function AnimatedColorPicker({ }){
                         >
                             <AnimatedTextInput
                                 value={color}
-                                style={[styles.input]}
+                                style={[styles.input, animatedInputTextStyle]}
                                 onChangeText={(color) => setState(currstate => ({ ...currstate, color }))}
+                                ref={inputViewText}
                             />
                             <TouchableWithoutFeedback /*onPress={this.toggleInput}*/>
-                                <Animated.View style={[styles.okayButton]}>
+                                <Animated.View style={[styles.okayButton, animatedOkButtonStyle]}>
                                     <Text style={styles.okayText}>OK</Text>
                                 </Animated.View>
                             </TouchableWithoutFeedback>
