@@ -8,16 +8,18 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 
 import Heroes from "../assets/avatars/Heroes"
 
 const initialState = {
-    activeImage: null, 
+    activeImage: null,
+    activeIndex: null,
 }
 export default function PhotoGridSharedElement({ }){
 
+    const insets = useSafeAreaInsets()
     const [state, setState] = useState(initialState)
 
     /** 
@@ -43,7 +45,79 @@ export default function PhotoGridSharedElement({ }){
      * @param {*} index index for the image that was clicked so that we 
      * can do our measurements and transition for that particular image
      */
-    const handleOpenImage = (index) => {}
+    const handleOpenImage = (index) => {
+        //get access to the ref of the image clicked so that we can call measure on it
+        gridImages.current[index].measure((x, y, width, height, pageX, pageY) => {
+            /**
+             * we can get the coordinates and the size so that we can do a image swap where the image clicked 
+             * in the photoGrid will be hidden, we set the image in the detailModalView to be thesame size for the image that was hidden.
+             * 
+             * We are going to have the activeImage() have thesame measurements with the image clicked in the photo grid
+             * we will finally have to swap out the image on the grid to the image in the modal
+             */
+            position.setValue({
+                x: pageX,
+                /**
+                 * Note: this 92, was some offeset value to move the activeImage up a bit to fill the space
+                 * left white by the imagepressed in the photo grid. The tutuorial i watched did not use this 
+                 * offset, but the iOS emulator they used was a smaller screensize compared to my own emulator
+                 */
+                y: pageY - 92,
+            })
+
+            size.setValue({
+                x: width,
+                y: height,
+            })
+
+            setState({
+                activeImage: Heroes[index].photo, //set our active image to the image we clicked
+                /**
+                 * Set the active index to know the image in grid we want to hide so that 
+                 * we can put the image shared with the modalView in that exact spot :)
+                 * 
+                 * Helps the transition looks smooth!
+                 */
+                activeIndex: index,
+            })
+
+            /**
+             * Now we this effect where the image in the photoGrip is swaped with the sharedImage(activeImage) in the modal view
+             * we can now do the transtion effect
+             * 
+             * NOTE: we call `t` target :)
+             */
+            viewImage.current.measure((tX, tY, tWidth, tHeight, tPageX, tPageY) => {
+                Animated.parallel([
+                    //animate the image to the exact position (tPageX and tPageY will be 0, 0 as expected :) the will have the iage positioned at the top-left corner )
+                    Animated.spring(position.x, {
+                        toValue: tPageX,
+                        useNativeDriver: false,
+                    }),
+                    Animated.spring(position.y, {
+                        toValue: tPageY - 92,
+                        useNativeDriver: false,
+                    }),
+                    //end positioning
+                    //start sizing the image
+                    Animated.spring(size.x, {
+                        toValue: tWidth,
+                        useNativeDriver: false,
+                    }),
+                    Animated.spring(size.y, {
+                        toValue: tHeight,
+                        useNativeDriver: false,
+                    }),
+                    //end sizing the image
+                    //animation for our content. Rememeber we had thins animation value interpolated to be able to slide the content down(off the screen) and up
+                    Animated.spring(animation, {
+                        toValue: 1,
+                        useNativeDriver: true,
+                    }),
+                ]).start()
+            })
+        })
+    }
 
     /** We want to slide the content down out of the way and slide back up later */
     const animatedImageDetailContentTranslate = animation.interpolate({
@@ -60,7 +134,24 @@ export default function PhotoGridSharedElement({ }){
         ]
     }
 
-    const { activeImage } = state
+    /** Render shared item using animated values so it appears in the same spot as our start item */
+    const activeImageStyle = {
+        width: size.x,
+        height: size.y,
+        top: position.y,
+        left: position.x,
+    }
+
+     /*
+     * controls the opacity on our grid image (the image pressed in the grid)
+     * We need to know what image we want to hide so that we can fill that space wih the shared image in the modal view
+     */
+    const activeIndexStyle = {
+        opacity: state.activeImage ? 0 : 1, //we did not animate this because we want it to be instant
+    }
+    /** end rendering shared item to appear on thesame spot */
+
+    const { activeImage, activeIndex } = state
 
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
@@ -71,6 +162,10 @@ export default function PhotoGridSharedElement({ }){
                     <View style={styles.grid}>
                         {
                             Heroes.map(({ id, photo }, index) => {
+
+                                const style = 
+                                    index === activeIndex ? activeIndexStyle : undefined
+
                                 return (
                                     <TouchableWithoutFeedback
                                         key={id}
@@ -79,7 +174,10 @@ export default function PhotoGridSharedElement({ }){
                                         <Image
                                             ref={image => gridImages.current[index] = image}
                                             source={photo}
-                                            style={[styles.gridImage /**we want grid sized images */]}
+                                            style={[
+                                                styles.gridImage, /**we want grid sized images */ 
+                                                style,
+                                            ]}
                                             resizeMode="cover"
                                         />
                                     </TouchableWithoutFeedback>
@@ -104,7 +202,7 @@ export default function PhotoGridSharedElement({ }){
                         key={activeImage /** helps clear out the cache each time we have a new active image or not */}
                         source={activeImage /** we set the image selected from our state. Starting at null, means the space for the image will be allocated but it will be transparent */}
                         resizeMode="cover" /** it is important we have matching resizeModes if we want the image transition to be smooth from the gird to this view */
-                        style={[styles.viewImage]}
+                        style={[styles.viewImage, activeImageStyle]}
                         />
                     </View>
                     <Animated.View
