@@ -116,6 +116,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressColorPicker = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_color_picker)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -282,6 +289,21 @@ export default function MainComponent(props){
               <Caption style={styles.description}>We learn a techinique to do Shard element transitioning using width, 
               height and absolute positioning. This is one method you can do this, but there is other method out there
                as well. We are trasitioning elements in thesame screen and not across screens with navigations</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressColorPicker}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Animated Color Picker</Heading3>
+              <Caption style={styles.description}>This tutorial will focus on constructing an animation piece by piece.
+               When dealing with one view transitioning to another view in the same space it's easier to construct one 
+               view without animation. Construct the second view across the top of it. Then figure out the animation to
+                transition one to the other. Focusing on building the views and the animation at the same time just makes 
+                things more difficult.</Caption>
             </View>
           </View>
         </TouchableOpacity>

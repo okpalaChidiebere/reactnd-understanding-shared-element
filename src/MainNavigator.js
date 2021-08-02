@@ -1,5 +1,6 @@
 import React from "react"
 import { createSharedElementStackNavigator } from "react-navigation-shared-element"
+import AnimatedColorPicker, { AnimatedColorPickerOptions } from "./components/AnimatedColorPicker"
 import AnimatedNotifications, { AnimatedNotificationsOptions } from "./components/AnimatedNotifications"
 import AnimatedQuestionnaire, { AnimatedQuestionnaireOptions } from "./components/AnimatedQuestionnaire"
 import AnimatedSvg, { AnimatedSvgOptions } from "./components/AnimatedSvg"
@@ -111,6 +112,11 @@ const MainNavigator = () => (
       name={Strings.component_custom_shared_element}
       component={PhotoGridSharedElement}
       options={PhotoGridSharedElementOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_color_picker}
+      component={AnimatedColorPicker}
+      options={AnimatedColorPickerOptions}
     />
   </Stack.Navigator>
 )
