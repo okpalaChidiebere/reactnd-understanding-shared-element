@@ -30,6 +30,13 @@ export default function PhotoGridSharedElement({ }){
     */
     const gridImages = useRef([])
     const viewImage = useRef()
+    const size = useRef(new Animated.ValueXY()).current //we are animating the widht and height of the images
+    const position = useRef(new Animated.ValueXY()).current //we are animation the absolute position of the images
+    /**
+     * We could do an interoplation on the imageDetailsContent based upon the Y positioning, 
+     * but we choose to use a separate animated value that we control. So this will do :)
+     */
+    const animation = useRef(new Animated.Value(0)).current //for general animation
 
     /**
      * 
@@ -37,6 +44,21 @@ export default function PhotoGridSharedElement({ }){
      * can do our measurements and transition for that particular image
      */
     const handleOpenImage = (index) => {}
+
+    /** We want to slide the content down out of the way and slide back up later */
+    const animatedImageDetailContentTranslate = animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [300, 0]
+    })
+
+    const animatedImageDetailContentStyles = {
+        opacity: animation,
+        transform: [
+            {
+                translateY: animatedImageDetailContentTranslate,
+            }
+        ]
+    }
 
     const { activeImage } = state
 
@@ -87,7 +109,7 @@ export default function PhotoGridSharedElement({ }){
                     </View>
                     <Animated.View
                         /** we will transition the image content in as well when the image is selected */
-                        style={[styles.imageDetailsContent]}
+                        style={[styles.imageDetailsContent, animatedImageDetailContentStyles]}
                         ref={(content) => (this._content = content)}
                     >
                         <Text style={styles.title}>Pretty Image from Unsplash</Text>
