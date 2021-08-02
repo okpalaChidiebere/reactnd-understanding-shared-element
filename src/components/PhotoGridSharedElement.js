@@ -254,6 +254,7 @@ export default function PhotoGridSharedElement({ }){
                         and receive a callback with its positioning, then we will get the measurements of this wrapper 
                         view where the image will be, and we are going to set the imageProperties (like width, height 
                         and coordinates of that image) in to this wrapper to be that of measurements for the one we pressed in the grid. */}
+                        onLayout={() => {}} /** for some reason,  viewImage.current.measure() returns undefined measurements in android, so this basically tells React we need acces to those measurments */
                     >
                         <Animated.Image
                         key={activeImage /** helps clear out the cache each time we have a new active image or not */}
