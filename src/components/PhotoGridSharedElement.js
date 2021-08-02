@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from "react-native"
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
+import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 
 import Heroes from "../assets/avatars/Heroes"
@@ -19,7 +19,6 @@ const initialState = {
 }
 export default function PhotoGridSharedElement({ }){
 
-    const insets = useSafeAreaInsets()
     const [state, setState] = useState(initialState)
 
     /** 
@@ -32,6 +31,7 @@ export default function PhotoGridSharedElement({ }){
     */
     const gridImages = useRef([])
     const viewImage = useRef()
+    const savedMeasurments = useRef(null)
     const size = useRef(new Animated.ValueXY()).current //we are animating the widht and height of the images
     const position = useRef(new Animated.ValueXY()).current //we are animation the absolute position of the images
     /**
@@ -48,6 +48,15 @@ export default function PhotoGridSharedElement({ }){
     const handleOpenImage = (index) => {
         //get access to the ref of the image clicked so that we can call measure on it
         gridImages.current[index].measure((x, y, width, height, pageX, pageY) => {
+            //We want to so save the location of the image in the grid so that we dont measure over and over again
+            //we know the image position will not change so this is fine
+            savedMeasurments.current = {
+                pageX,
+                pageY: pageY - 92,
+                width,
+                height,
+            }
+
             /**
              * we can get the coordinates and the size so that we can do a image swap where the image clicked 
              * in the photoGrid will be hidden, we set the image in the detailModalView to be thesame size for the image that was hidden.
@@ -115,6 +124,44 @@ export default function PhotoGridSharedElement({ }){
                         useNativeDriver: true,
                     }),
                 ]).start()
+            })
+        })
+    }
+
+    /**we basically do the revers of our animation we opened the modalView with */
+    const handleClose = () => {
+        Animated.parallel([
+            Animated.timing(position.x, {
+                toValue: savedMeasurments.current.pageX,
+                duration: 250,
+                useNativeDriver: false,
+            }),
+            Animated.timing(position.y, {
+                toValue: savedMeasurments.current.pageY,
+                duration: 250,
+                useNativeDriver: false,
+            }),
+            Animated.timing(size.x, {
+                toValue: savedMeasurments.current.width,
+                duration: 250,
+                useNativeDriver: false,
+            }),
+            Animated.timing(size.y, {
+                toValue: savedMeasurments.current.height,
+                duration: 250,
+                useNativeDriver: false,
+            }),
+            //hide back out content
+            Animated.timing(animation, {
+                toValue: 0,
+                duration: 250,
+                useNativeDriver: true,
+            }),
+        ]).start(() => {
+            //this will diable the ponter events of the modal view so that we can control back the photoGrid in the scrollView
+            setState({
+                activeImage: null,
+                activeIndex: null,
             })
         })
     }
@@ -218,7 +265,6 @@ export default function PhotoGridSharedElement({ }){
                     <Animated.View
                         /** we will transition the image content in as well when the image is selected */
                         style={[styles.imageDetailsContent, animatedImageDetailContentStyles]}
-                        ref={(content) => (this._content = content)}
                     >
                         <Text style={styles.title}>Pretty Image from Unsplash</Text>
                         <Text>
@@ -233,7 +279,7 @@ export default function PhotoGridSharedElement({ }){
                         orci viverra metus, eget finibus neque turpis sed turpis.
                         </Text>
                     </Animated.View>
-                    <TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={handleClose}>
                         <Animated.View style={[styles.close, animatedCloseButtonStyle]}>
                             <Text style={styles.closeText}>X</Text>
                         </Animated.View>
