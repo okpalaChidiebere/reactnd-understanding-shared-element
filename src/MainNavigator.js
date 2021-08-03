@@ -4,6 +4,7 @@ import AnimatedColorPicker, { AnimatedColorPickerOptions } from "./components/An
 import AnimatedNotifications, { AnimatedNotificationsOptions } from "./components/AnimatedNotifications"
 import AnimatedQuestionnaire, { AnimatedQuestionnaireOptions } from "./components/AnimatedQuestionnaire"
 import AnimatedSvg, { AnimatedSvgOptions } from "./components/AnimatedSvg"
+import FABWithMenu, { FABWithMenuOptions } from "./components/FABWithMenu"
 import FourCorners, { FourCornersOptions } from "./components/FourCorners"
 import KittenCards, { KittenCardsOptions } from "./components/KittenCards"
 import MainComponent, { MainComponentOptions } from "./components/MainComponent"
@@ -117,6 +118,11 @@ const MainNavigator = () => (
       name={Strings.component_color_picker}
       component={AnimatedColorPicker}
       options={AnimatedColorPickerOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_fab_with_menu}
+      component={FABWithMenu}
+      options={FABWithMenuOptions}
     />
   </Stack.Navigator>
 )

@@ -97,5 +97,6 @@ This works well for images, however there are cases where you want to do text, e
 
 # Animated Color Picker 
 - Takeaway is have all the layout set out for the view first, then start to revese each piece of effect at a time until you have the animation that you desired for and use pointer events when you need to
-- This animation is inspred by [Nick Frost](https://dribbble.com/shots/2229372)
+- The animation you learned here is useful where sometimes you might want to swap out icons in the Header of your screen triggered by certain actions on the page or while swiping between page screens. The technique you learned here will be useful
+- This animation is inspired by [Nick Frost](https://dribbble.com/shots/2229372)
 - Breakdown of the animation [here](https://codedaily.io/courses/Master-React-Native-Animations/Animated-Color-Picker-Breakdown)

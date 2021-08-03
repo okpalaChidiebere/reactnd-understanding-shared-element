@@ -123,6 +123,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressFABMenu = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_fab_with_menu)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -304,6 +311,20 @@ export default function MainComponent(props){
                view without animation. Construct the second view across the top of it. Then figure out the animation to
                 transition one to the other. Focusing on building the views and the animation at the same time just makes 
                 things more difficult.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressFABMenu}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Floating Action Button with Menu</Heading3>
+              <Caption style={styles.description}>A common design paradigm popularized by Material design(?) is a floating action button 
+              in the bottom right corner of the screen. In our case we'll be rebuilding the starbucks app pay button. Not only does this
+               have a floating button, it has 2 other floating buttons, and a circular background cover that shoots out to allow you to 
+               focus on the options.</Caption>
             </View>
           </View>
         </TouchableOpacity>
