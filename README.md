@@ -96,7 +96,11 @@ There is another method without a wrapping container:
 This works well for images, however there are cases where you want to do text, etc. This gets even more complicated but is still possible. The simple naive solution that a lot of people use is to snapshot a view (turn it into an image), and then morph it to it's destination and then swap in the actual content.
 
 # Animated Color Picker 
-- Takeaway is have all the layout set out for the view first, then start to revese each piece of effect at a time until you have the animation that you desired for and use pointer events when you need to
+- Takeaway is have all the layout set out for the view first, then start to reverse each piece of effect at a time until you have the animation that you desired for and use pointer events when you need to
 - The animation you learned here is useful where sometimes you might want to swap out icons in the Header of your screen triggered by certain actions on the page or while swiping between page screens. The technique you learned here will be useful
 - This animation is inspired by [Nick Frost](https://dribbble.com/shots/2229372)
 - Breakdown of the animation [here](https://codedaily.io/courses/Master-React-Native-Animations/Animated-Color-Picker-Breakdown)
+
+# Floating Action Button with Menu
+- **Takeaway** is to being detect a reversible animation and know that that you want to have the range as simple as from 0 to 1. if the reversible animation is controlled by a scrollView where the range can be highr, just know the range you want to accept and interpolate it from 0 to 1 and use the output interpolation as input to drive yoir animations
+- AnimationBreakDown [here](https://codedaily.io/courses/Master-React-Native-Animations/Floating-Action-Button-with-Menu-Breakdown)

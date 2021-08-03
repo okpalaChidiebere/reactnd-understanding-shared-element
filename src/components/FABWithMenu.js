@@ -4,7 +4,6 @@ import {
   View,
   Animated,
   Text,
-  TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native"
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons'; 
@@ -99,9 +98,30 @@ export default function FABWithMenu(){
     }
     /** END APPLY ANIMATION STYLE TO BUTTON LABEL */
 
+    /** START APPLY ANIMATION_STYLE TO MENU BACGROUND */
+    
+    //NOTE we dont have to animate the opacity because the styles.backgrund makes the button postioned at the back of the other buttons by default
+    const menuBgStyle = {
+        transform: [
+          {
+            scale: animation.interpolate({
+                inputRange: [0, 1],
+                /**
+                 * You could calculate the required numbr by taking the size of 
+                 * our button(60) and size of the screen and roughtly dividing
+                 *  it by two but we choose random large number of 30
+                 */
+                outputRange: [0, 30],
+            }),
+          },
+        ],
+    }
+    /** END APPLY ANIMATION_STYLE TO MENU BACGROUND */
+
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
             <View style={styles.container}>
+            <Animated.View style={[styles.background, menuBgStyle]} /*the background color that explodes out from the FAB*/ />
                 <TouchableWithoutFeedback /** order menu action*/>
                     <Animated.View style={[styles.button, styles.other, orderActionStyle]}>
                         <Animated.Text style={[styles.label, buttonLabelStyle]}>Order</Animated.Text>
@@ -128,6 +148,19 @@ export default function FABWithMenu(){
 const styles = StyleSheet.create({
     container: {
       flex: 1,
+    },
+    background: {
+        backgroundColor: "rgba(0,0,0,.2)",
+        position: "absolute",
+        /**
+         * Ntice that we gave it the exact same positioning as the buttons 
+         * so that it will sit beind all of our buttons and explodes out
+         *  */
+        width: 60,
+        height: 60,
+        bottom: 20,
+        right: 20,
+        borderRadius: 30,
     },
     button: {
         width: 60,
