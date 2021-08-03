@@ -1,6 +1,5 @@
 import React, { useRef } from "react"
 import {
-  AppRegistry,
   StyleSheet,
   View,
   Animated,
@@ -21,18 +20,69 @@ export default function FABWithMenu(){
      * and everything interpolates correctly
      */
     const animation = useRef(new Animated.Value(0)).current
-    const toggelOpen = () => {}
+    const toggelOpen = () => {
+        /**
+         * initially this.open will be undefined(which is Falsy) so 1 will be assinged to toValue
+         * https://developer.mozilla.org/en-US/docs/Glossary/Falsy
+         */
+        const toValue = this.mOpen ? 0 : 1
+
+        Animated.timing(animation, {
+            toValue,
+            duration: 200,
+            useNativeDriver: true,
+        }).start()
+
+        this.mOpen = !this.mOpen
+    }
+
+    const reloadActionStyle = {
+        transform: [
+            {
+                /**
+                 * FYI: we are passing our animtion value here directly knowing
+                 * that it only will range from 0 to 1. If any chance than anition 
+                 * value will go pass 1 or below 0, then we will have to pass the interpolation
+                 * of the animtionValue with inputRange and outputRange between 0 to 1 with 
+                 * a "clamp" extrapolate
+                 * 
+                 * Good to know :)
+                 * */
+                scale: animation
+            },
+            {
+                translateY: animation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -70], //-70 (60 for button size and 10 pixels upwards from rest position) means we are moving this button upwards
+                })
+            },
+        ],
+    }
+      
+    const orderActionStyle = {
+        transform: [
+            {
+                scale: animation
+            },
+            {
+                translateY: animation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -140],
+                })
+            },
+        ],
+    }
 
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
             <View style={styles.container}>
                 <TouchableWithoutFeedback /** order menu action*/>
-                    <Animated.View style={[styles.button, styles.other]}>
+                    <Animated.View style={[styles.button, styles.other, orderActionStyle]}>
                         <Icon name="food-fork-drink" size={20} color="#555" />
                     </Animated.View>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback /** the reload menu action */>
-                    <Animated.View style={[styles.button, styles.other]}>
+                    <Animated.View style={[styles.button, styles.other, reloadActionStyle]}>
                         <Icon name="reload" size={20} color="#555" />
                     </Animated.View>
                 </TouchableWithoutFeedback>
