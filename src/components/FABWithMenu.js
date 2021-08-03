@@ -73,21 +73,50 @@ export default function FABWithMenu(){
         ],
     }
 
+    /** START APPY ANIMATION STYLE TO BUTTON LABEL */
+    //we will slowly or causaully move the text outwoards to the left from the rest position
+    const labelPositionInterpolate = animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [-30, -90] //The text will always be offset by -30 and animate to an offset of -90
+    })
+    
+    /**
+     * we will not show the button label until the 80th percent of the animation because we 
+     * don't want the text to appear over our icons and transition out
+     */
+    const buttonLabelOpacityInterpolate = animation.interpolate({
+        inputRange: [0, 0.8, 1], //you can try .2 on your own to see how the text moves out from the button :)
+        outputRange: [0, 0, 1]
+    })
+      
+    const buttonLabelStyle = {
+        opacity: buttonLabelOpacityInterpolate,
+        transform: [
+          {
+            translateX: labelPositionInterpolate,
+          },
+        ],
+    }
+    /** END APPLY ANIMATION STYLE TO BUTTON LABEL */
+
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
             <View style={styles.container}>
                 <TouchableWithoutFeedback /** order menu action*/>
                     <Animated.View style={[styles.button, styles.other, orderActionStyle]}>
+                        <Animated.Text style={[styles.label, buttonLabelStyle]}>Order</Animated.Text>
                         <Icon name="food-fork-drink" size={20} color="#555" />
                     </Animated.View>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback /** the reload menu action */>
                     <Animated.View style={[styles.button, styles.other, reloadActionStyle]}>
+                        <Animated.Text style={[styles.label, buttonLabelStyle]}>Reload</Animated.Text>
                         <Icon name="reload" size={20} color="#555" />
                     </Animated.View>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback onPress={toggelOpen} /**our FAB "pay" button */>
                     <View style={[styles.button, styles.pay]}>
+                        <Animated.Text style={[styles.label, buttonLabelStyle]}>Pay</Animated.Text>
                         <Text style={styles.payText}>$5.00</Text>
                     </View>
                 </TouchableWithoutFeedback>
@@ -125,7 +154,7 @@ const styles = StyleSheet.create({
     },
     label: {
         color: "#fff",
-        position: "absolute",
+        position: "absolute", //the button text will be independent of anything inside the button
         fontSize: 18,
         backgroundColor: "transparent",
     },      
