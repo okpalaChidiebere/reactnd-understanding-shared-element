@@ -21,4 +21,5 @@ export const Strings = {
     component_custom_shared_element: "Photo Grid Custom Shared Element",
     component_color_picker: "Animated Color Picker",
     component_fab_with_menu: "Floating Action Button with Menu",
+    component_application_intro: "Application Intro"
 }

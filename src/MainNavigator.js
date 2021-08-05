@@ -4,6 +4,7 @@ import AnimatedColorPicker, { AnimatedColorPickerOptions } from "./components/An
 import AnimatedNotifications, { AnimatedNotificationsOptions } from "./components/AnimatedNotifications"
 import AnimatedQuestionnaire, { AnimatedQuestionnaireOptions } from "./components/AnimatedQuestionnaire"
 import AnimatedSvg, { AnimatedSvgOptions } from "./components/AnimatedSvg"
+import ApplicationIntro, { ApplicationIntroOptions } from "./components/ApplicationIntro"
 import FABWithMenu, { FABWithMenuOptions } from "./components/FABWithMenu"
 import FourCorners, { FourCornersOptions } from "./components/FourCorners"
 import KittenCards, { KittenCardsOptions } from "./components/KittenCards"
@@ -123,6 +124,11 @@ const MainNavigator = () => (
       name={Strings.component_fab_with_menu}
       component={FABWithMenu}
       options={FABWithMenuOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_application_intro}
+      component={ApplicationIntro}
+      options={ApplicationIntroOptions}
     />
   </Stack.Navigator>
 )

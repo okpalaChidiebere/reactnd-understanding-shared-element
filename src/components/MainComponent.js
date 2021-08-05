@@ -130,6 +130,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressAppIntro = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_application_intro)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -325,6 +332,18 @@ export default function MainComponent(props){
               in the bottom right corner of the screen. In our case we'll be rebuilding the starbucks app pay button. Not only does this
                have a floating button, it has 2 other floating buttons, and a circular background cover that shoots out to allow you to 
                focus on the options.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressAppIntro}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Application Intro Screen</Heading3>
+              <Caption style={styles.description}>The key for all of this is that we setup our interpolations based upon the contentOffset
+               of our scroll view. On our x axis since we will be scrolling horizontal.</Caption>
             </View>
           </View>
         </TouchableOpacity>
