@@ -55,11 +55,65 @@ const getScreen1Styles = (animation, width) => useAnimatedStyle(() => {
     }
 })
 
+const getScreen2Styles = (animation, width) => {
+    /** 
+     * We implement two animations
+     * 1. An entrance animation: Swipe from Screen2 from the left side, the image2 faded in and move from the bottom to up(its rest postion)
+     * 2. An exit animtion: swiping to the Screen 3, when have the image2 move upwards and fade out as well
+     * 
+     * Our inputRange is as follows:
+     * 0 - the stable postion for Screen 1. This is where we will define 
+     *    our entrance animation
+     * width - stable position for the current page Screen 2. We 
+     *       dont want to do animation when page2 is visible
+     * width * 2 - stable position for the third screen. We multiplied by 
+     *           2 because we have gone by two different screens. This is
+     *           where we define what animations we want as we move to screen three
+     */
+    const inputRange = [0, width, width * 2]
+    
+    return useAnimatedStyle(() => {
+        const image2TranslateY = interpolate(
+            animation.value,
+            inputRange,
+            /**
+             * we will keep move the image downwards(100) from the default postion at start,
+             * Move the image to its normal position(0) when the page2 is stable,
+             * Move the image updards(-100) as we exit the Screen2 and go to screen3
+             *  */
+            [100, 0, -100],
+            Extrapolate.CLAMP
+        )
+    
+        const image2Opacity = interpolate(
+            animation.value,
+            inputRange,
+            /**
+             * When the Screen2 is offScreen meaning Screen1 is visible we hide the image,
+             * As we scroll to Screen2 we reveal the image slowly,
+             * As we move away from Screen 2 to go to Screen 3, we hide image slowly
+             */
+            [0, 1, 0],
+            Extrapolate.CLAMP //not really necessary but we just add the clamp
+        )
+
+        return {
+            opacity: image2Opacity,
+            transform: [
+                {
+                  translateY: image2TranslateY,
+                },
+            ],
+        }
+    })
+}
+
 export default function ApplicationIntro(){
     const { width, height } = Dimensions.get("window")
     const animation = useSharedValue(0)
 
-    const screen1Styles = getScreen1Styles(animation, width) //the paging of the scrollView is off the width of screen, so our inoutRange for scrollAnimaton wll be the width as well
+    const screen1Styles = getScreen1Styles(animation, width) //the paging of the scrollView is off the width of screen, so our inputRange for scrollAnimaton wll be the width as well
+    const screen2Styles = getScreen2Styles(animation, width)
 
     return(
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
@@ -119,6 +173,52 @@ export default function ApplicationIntro(){
                         </View>
                         <View style={styles.screenText}>
                             <Text>Screen 1</Text>
+                        </View>
+                    </View>
+                    <View style={{ width, height, backgroundColor: "#F89E20" }} /** SCREEN 2 */>
+                        <View style={styles.screenHeader}>
+                            <Animated.Image
+                                source={require("../assets/stories/c1.png")}
+                                style={{
+                                    /**
+                                     * To maintain the partuclar size of this image across desnities of different screens
+                                     * we use PixelRatio.getPixelSizeForLayoutSize(<whateverSize>)
+                                     * 
+                                     * SIDE NOTE: you can apply this to fontSize as well. Just use PixelRatio.getFontScale()
+                                     *  */
+                                    width: PixelRatio.getPixelSizeForLayoutSize(75), //this 75 might become a value larger than 75 on a larger phone with bigger densities
+                                    height: PixelRatio.getPixelSizeForLayoutSize(63),
+                                }}
+                                resizeMode="contain"
+                            />
+                            <Animated.Image
+                                source={require("../assets/stories/c2.png")}
+                                style={[
+                                    {
+                                    width: PixelRatio.getPixelSizeForLayoutSize(46),
+                                    height: PixelRatio.getPixelSizeForLayoutSize(28),
+                                    position: "absolute",
+                                    top: 235,
+                                    left: 100,
+                                    },
+                                    screen2Styles
+                                ]}
+                                resizeMode="contain"
+                            />
+                            <Animated.Image
+                                source={require("../assets/stories/c3.png")}
+                                style={{
+                                    width: PixelRatio.getPixelSizeForLayoutSize(23),
+                                    height: PixelRatio.getPixelSizeForLayoutSize(17),
+                                    position: "absolute",
+                                    top: 200,
+                                    left: 110,
+                                }}
+                                resizeMode="contain"
+                            />
+                        </View>
+                        <View style={styles.screenText}>
+                            <Text>Screen 2</Text>
                         </View>
                     </View>
                 </Animated.ScrollView>
