@@ -5,6 +5,7 @@ import {
   View,
   Dimensions,
   PixelRatio,
+  Image,
 } from "react-native"
 import Animated, {
     useAnimatedScrollHandler, 
@@ -108,12 +109,61 @@ const getScreen2Styles = (animation, width) => {
     })
 }
 
+const getScreen3Styles = (animation, width) => {
+    /**
+     * For Screen3 animation input range, 
+     * the previous Stable position was Screen 2, so we represent that in the input range as `width` value
+     * The current stable position is Screen 3(the current screen), so we represent that in the input range as `width * 2` value
+     * The positon of the 4th screen will be `width * 3` if we have any
+     */
+     const inputRange = [width, width * 2, width * 3]
+
+    return {
+        image1: useAnimatedStyle(() => {
+            return {
+                transform: [
+                    {
+                        scale: interpolate(
+                            animation.value,
+                            inputRange,
+                            [0, 1, 0],
+                            Extrapolate.CLAMP
+                        ),
+                    },
+                ],
+            }
+        }),
+        image2: useAnimatedStyle(() => {
+            const scale = interpolate(
+                animation.value,
+                inputRange,
+                [0, 1, 0],
+                Extrapolate.CLAMP
+            )
+            const rotate = interpolate(
+                animation.value,
+                inputRange,
+                [-180, 0, 180],
+                Extrapolate.CLAMP
+            )
+
+            return {
+                transform: [
+                    { scale },
+                    { rotate: `${rotate}deg` },
+                ]
+            }
+        }),
+    }
+}
+
 export default function ApplicationIntro(){
     const { width, height } = Dimensions.get("window")
     const animation = useSharedValue(0)
 
     const screen1Styles = getScreen1Styles(animation, width) //the paging of the scrollView is off the width of screen, so our inputRange for scrollAnimaton wll be the width as well
     const screen2Styles = getScreen2Styles(animation, width)
+    const screen3Styles = getScreen3Styles(animation, width)
 
     return(
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
@@ -130,7 +180,7 @@ export default function ApplicationIntro(){
                 >
                     <View style={{ width, height, backgroundColor: "#F89E20" }} /** Screen 1 */>
                         <View style={styles.screenHeader}>
-                            <Animated.Image
+                            <Image
                                 source={require("../assets/stories/c1.png")}
                                 style={{
                                     /**
@@ -159,7 +209,7 @@ export default function ApplicationIntro(){
                                 ]}
                                 resizeMode="contain"
                             />
-                            <Animated.Image
+                            <Image
                                 source={require("../assets/stories/c3.png")}
                                 style={{
                                     width: PixelRatio.getPixelSizeForLayoutSize(23),
@@ -177,7 +227,7 @@ export default function ApplicationIntro(){
                     </View>
                     <View style={{ width, height, backgroundColor: "#F89E20" }} /** SCREEN 2 */>
                         <View style={styles.screenHeader}>
-                            <Animated.Image
+                            <Image
                                 source={require("../assets/stories/c1.png")}
                                 style={{
                                     /**
@@ -205,7 +255,7 @@ export default function ApplicationIntro(){
                                 ]}
                                 resizeMode="contain"
                             />
-                            <Animated.Image
+                            <Image
                                 source={require("../assets/stories/c3.png")}
                                 style={{
                                     width: PixelRatio.getPixelSizeForLayoutSize(23),
@@ -219,6 +269,49 @@ export default function ApplicationIntro(){
                         </View>
                         <View style={styles.screenText}>
                             <Text>Screen 2</Text>
+                        </View>
+                    </View>
+                    <View style={{ width, height, backgroundColor: "#F89E20" }} /** SCREEN 3 */>
+                        <View style={styles.screenHeader}>
+                            <Animated.Image
+                                source={require("../assets/stories/c1.png")}
+                                style={[
+                                    {
+                                        width: PixelRatio.getPixelSizeForLayoutSize(75), //this 75 might become a value larger than 75 on a larger phone with bigger densities
+                                        height: PixelRatio.getPixelSizeForLayoutSize(63),
+                                    },
+                                    screen3Styles.image1,
+                            ]}
+                                resizeMode="contain"
+                            />
+                            <Animated.Image
+                                source={require("../assets/stories/c2.png")}
+                                style={[
+                                    {
+                                        width: PixelRatio.getPixelSizeForLayoutSize(46),
+                                        height: PixelRatio.getPixelSizeForLayoutSize(28),
+                                        position: "absolute",
+                                        top: 235,
+                                        left: 100,
+                                    },
+                                    screen3Styles.image2,
+                                ]}
+                                resizeMode="contain"
+                            />
+                            <Image
+                                source={require("../assets/stories/c3.png")}
+                                style={{
+                                    width: PixelRatio.getPixelSizeForLayoutSize(23),
+                                    height: PixelRatio.getPixelSizeForLayoutSize(17),
+                                    position: "absolute",
+                                    top: 200,
+                                    left: 110,
+                                }}
+                                resizeMode="contain"
+                            />
+                        </View>
+                        <View style={styles.screenText}>
+                            <Text>Screen 3</Text>
                         </View>
                     </View>
                 </Animated.ScrollView>

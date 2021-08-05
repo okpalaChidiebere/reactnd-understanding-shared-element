@@ -104,3 +104,8 @@ This works well for images, however there are cases where you want to do text, e
 # Floating Action Button with Menu
 - **Takeaway** is to being detect a reversible animation and know that that you want to have the range as simple as from 0 to 1. if the reversible animation is controlled by a scrollView where the range can be highr, just know the range you want to accept and interpolate it from 0 to 1 and use the output interpolation as input to drive yoir animations
 - AnimationBreakDown [here](https://codedaily.io/courses/Master-React-Native-Animations/Floating-Action-Button-with-Menu-Breakdown)
+
+# Application Intro Screen
+- The Aim of this animations is to understand how to animate objects in ScrollViews while they are scrolling
+- In a real world example you would be deriving your inputRange based upon the index of the screen (like in ViewPager) and not explicitly building it out like we did in the Demo. However building it manually was done to show case exactly what is happening behind the scenes. We're emphasizing dynamic interpolation input ranges while still emphasizing that you can produce normal output range effects.
+- See the animation breakdown [here](https://codedaily.io/courses/Master-React-Native-Animations/Application-Intro-Screen-Breakdown)
