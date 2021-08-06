@@ -144,6 +144,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressAnimateModalSwipe = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_modal_with_animation)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -362,6 +369,17 @@ export default function MainComponent(props){
             <View style={styles.demoItemContent}>
               <Heading3>Evolving Write Button</Heading3>
               <Caption style={styles.description}>Sometimes it makes sense to start with the view you are attempting to animate to. Here we will start with our end editor animation and slowly work it down to a button. </Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressAnimateModalSwipe}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Social Comment Modal</Heading3>
+              <Caption style={styles.description}>Create a Social Comment Modal with Animated Swipe Away in React Native</Caption>
             </View>
           </View>
         </TouchableOpacity>

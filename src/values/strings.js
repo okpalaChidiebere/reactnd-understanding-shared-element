@@ -23,4 +23,5 @@ export const Strings = {
     component_fab_with_menu: "Floating Action Button with Menu",
     component_application_intro: "Application Intro",
     component_evolve_write_button: "Evolving Write Button",
+    component_modal_with_animation: "Animated Modal Swipe Away in React Native",
 }

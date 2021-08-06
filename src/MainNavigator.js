@@ -21,6 +21,7 @@ import XYZReaderComponent, { XYZReaderComponentOptions } from "./components/XYZR
 import XYZReaderDetails, { XYZReaderDetailsOptions } from "./components/XYZReaderDetails"
 import EvolvingWriteButton, { EvolvingWriteButtonOptions } from "./components/EvolvingWriteButton"
 import { Strings } from "./values"
+import ModalWithAnimatedSwipeAway, { ModalWithAnimatedSwipeAwayOptions } from "./components/ModalWithAnimatedSwipeAway"
 
 const Stack = createSharedElementStackNavigator()
 const MainNavigator = () => (
@@ -135,6 +136,11 @@ const MainNavigator = () => (
       name={Strings.component_evolve_write_button}
       component={EvolvingWriteButton}
       options={EvolvingWriteButtonOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_modal_with_animation}
+      component={ModalWithAnimatedSwipeAway}
+      options={ModalWithAnimatedSwipeAwayOptions}
     />
   </Stack.Navigator>
 )
