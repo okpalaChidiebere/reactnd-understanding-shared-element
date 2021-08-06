@@ -8,7 +8,7 @@ import {
     TouchableWithoutFeedback,
     KeyboardAvoidingView,
 } from "react-native"
-import Animated from "react-native-reanimated"
+import Animated, { Extrapolate, interpolate, useSharedValue, useAnimatedStyle } from "react-native-reanimated"
 import { MaterialCommunityIcons as Icon } from "@expo/vector-icons"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
@@ -19,6 +19,64 @@ import { Colors, Strings } from "../values"
 export default function EvolvingWriteButton(){
     const { width } = Dimensions.get("window")
     const textInputRef = useRef() //allows us to focus or blur the TextInput whenever we open or close the editor
+    const animation = useSharedValue(0) //This is a reversible an imation so we only have a single animated value that defaults to 0
+
+    /** Half way through the animation we want to have the toolBar to be full width */
+    const widthInterpolate = interpolate(
+        animation.value,
+        [0, .5],
+        /**
+         * 100, is width of the bar when the editor is closed. 
+         * width - 50 is the final width. On your own you can interpolate this width based in percentage but we are going off the width of the screen
+         */
+        [100, width - 50],
+        Extrapolate.CLAMP
+    )
+
+    /** We want the toolBar icons to *appear when the icons is closed */
+    const opacityToolBarInterpolate = interpolate(
+        animation.value,
+        [0, .5],
+        [0, 1], //we want the icons to only show up half-way through the animation
+        Extrapolate.CLAMP
+    )
+
+    const editorToolbarStyles = useAnimatedStyle(() => ({
+        opacity: opacityToolBarInterpolate,
+    }))
+
+    /** we want the editorheight to dropDown at the later stage of this animation */
+    const editorHeightInterpolate = interpolate(
+        animation.value,
+        [.7, 1],
+        [0, 150],
+        Extrapolate.CLAMP
+    )
+
+    const editorCententStyle = useAnimatedStyle(() => ({
+        opacity: animation.value,
+        height: editorHeightInterpolate,
+    }))
+    /** End adding animation for editorHeight */
+
+    /** 
+     * Hide button text at the firstHalf(0 to .5) of the animation. The text will disappear
+     * as we open the textEditor
+     * 
+     * While breaking down the animation frames it dribble, it quickly disappears,
+     * but we want to have it slowly disapear
+     *  */
+    const opacityButtonInterpolate = interpolate(
+        animation.value,
+        [0, .5],
+        [1, 0],
+        Extrapolate.CLAMP
+    )
+
+    const buttonStyle = useAnimatedStyle(() => ({
+        opacity: opacityButtonInterpolate,
+    }))
+    /** End hiding button Text */
 
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
@@ -29,12 +87,12 @@ export default function EvolvingWriteButton(){
                 behavior="padding"
             >
                 <Animated.View /** This view ill wrap all of our editor content */
-                    style={[styles.editor, { width: width - 40 /** FYI we will interpolate on this later */ }]}
+                    style={[styles.editor, { width: widthInterpolate }]}
                 >
                     <View style={styles.bar} /** Since we are going to animate the bar icons in and the
                      rightButtons(inside styles.rightInnerBar) , we will need to have thesame blue 
                      background for whatever animations we need this wraping bar*/>
-                        <Animated.View style={styles.toolbar}>
+                        <Animated.View style={[styles.toolbar, editorToolbarStyles]}>
                             <Icon name="format-bold" color="#FFF" size={20} />
                             <Icon name="format-italic" color="#FFF" size={20} />
                             <Icon name="format-underline" color="#FFF" size={20} />
@@ -48,7 +106,7 @@ export default function EvolvingWriteButton(){
                         </Animated.View>
                         <Animated.View 
                             /**Our button is rendered inside the bar, so that it will have the blue background */
-                            style={[StyleSheet.absoluteFill, styles.center]}
+                            style={[StyleSheet.absoluteFill, styles.center, buttonStyle]}
                         >
                             <TouchableWithoutFeedback>
                                 <View>
@@ -58,7 +116,7 @@ export default function EvolvingWriteButton(){
                         </Animated.View>
                     </View>
                     <Animated.View /** The will be our insert text input that slides up */
-                        style={styles.lowerView}
+                        style={[styles.lowerView, editorCententStyle]}
                     >
                         <TextInput 
                             placeholder="Start typing ...."
