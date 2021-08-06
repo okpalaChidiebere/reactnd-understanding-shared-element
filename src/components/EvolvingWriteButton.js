@@ -7,6 +7,7 @@ import {
     Dimensions,
     TouchableWithoutFeedback,
     KeyboardAvoidingView,
+    Pressable,
 } from "react-native"
 import Animated, { 
     Extrapolate, 
@@ -18,10 +19,11 @@ import Animated, {
 } from "react-native-reanimated"
 import { MaterialCommunityIcons as Icon } from "@expo/vector-icons"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { useHeaderHeight } from "@react-navigation/stack"
 import { Colors, Strings } from "../values"
 
 
-
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 export default function EvolvingWriteButton(){
     const { width } = Dimensions.get("window")
@@ -63,6 +65,17 @@ export default function EvolvingWriteButton(){
 
         return {
             opacity: opacityToolBarInterpolate,
+        }
+    })
+
+    const closeButton = useAnimatedStyle(() => {
+        return {
+            opacity: interpolate(
+                animation.value,
+                [0, .5],
+                [0, 1],
+                Extrapolate.CLAMP
+            )
         }
     })
 
@@ -111,6 +124,10 @@ export default function EvolvingWriteButton(){
        const toValue = isEditorOpened.current ? 0 : 1
 
        const updateEditor = () => {      
+            isEditorOpened.current 
+            ? textInputRef.current.blur() //here we are heading towards not opening the editor, so we blur out the keyboard
+            : textInputRef.current.focus() //it means that we are opening
+
             isEditorOpened.current = !isEditorOpened.current
             SetEditorPointerEvent(isEditorOpened.current)
         }
@@ -128,6 +145,7 @@ export default function EvolvingWriteButton(){
             /** we used keyboardAvoidingView because we this is a user input */
                 style={styles.center}
                 behavior="padding"
+                keyboardVerticalOffset={useHeaderHeight() + 20} //see more ways to set this https://stackoverflow.com/questions/48420468/keyboardavoidingview-not-working-properly
             >
                 <Animated.View /** This view ill wrap all of our editor content */
                     style={[styles.editor, editorWidthStyle]}
@@ -173,6 +191,9 @@ export default function EvolvingWriteButton(){
                         />
                     </Animated.View>
                 </Animated.View>
+                <AnimatedPressable style={closeButton/** i could have used editorToolbarStyles here again, but reanimated2 does not allow that. I have to repeat the code :( */} onPress={toggleTransform}>
+                    <Text style={styles.close}>Close</Text>
+                </AnimatedPressable>
             </KeyboardAvoidingView>
             </View>
         </SafeAreaView>
@@ -220,6 +241,11 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: Colors.back,
+    },
+    close: {
+        color: "#2979ff",
+        marginTop: 10,
+        marginBottom: 20,
     },
 })
 

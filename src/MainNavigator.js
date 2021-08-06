@@ -19,8 +19,8 @@ import StaggerFormItems, { StaggerFormItemsOptions } from "./components/StaggerF
 import UnmountAnimation, { UnmountAnimationOptions } from "./components/UnmountAnimations"
 import XYZReaderComponent, { XYZReaderComponentOptions } from "./components/XYZReaderComponent"
 import XYZReaderDetails, { XYZReaderDetailsOptions } from "./components/XYZReaderDetails"
+import EvolvingWriteButton, { EvolvingWriteButtonOptions } from "./components/EvolvingWriteButton"
 import { Strings } from "./values"
-import EvolvingWriteButton, { EvolvingWriteButtonOptions } from "./values/EvolvingWriteButton"
 
 const Stack = createSharedElementStackNavigator()
 const MainNavigator = () => (

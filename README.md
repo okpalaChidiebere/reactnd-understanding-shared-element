@@ -109,3 +109,7 @@ This works well for images, however there are cases where you want to do text, e
 - The Aim of this animations is to understand how to animate objects in ScrollViews while they are scrolling
 - In a real world example you would be deriving your inputRange based upon the index of the screen (like in ViewPager) and not explicitly building it out like we did in the Demo. However building it manually was done to show case exactly what is happening behind the scenes. We're emphasizing dynamic interpolation input ranges while still emphasizing that you can produce normal output range effects.
 - See the animation breakdown [here](https://codedaily.io/courses/Master-React-Native-Animations/Application-Intro-Screen-Breakdown)
+
+# Evolving Write Button
+- This animation was inspired by Mike Dick on [dribbble](https://dribbble.com/shots/3046893)
+- Animation BreakDown [here](https://codedaily.io/courses/Master-React-Native-Animations/Evolving-Write-Button-Breakdown)
