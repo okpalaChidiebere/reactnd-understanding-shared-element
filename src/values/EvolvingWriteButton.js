@@ -13,6 +13,8 @@ import Animated, {
     interpolate,
     useSharedValue, 
     useAnimatedStyle, 
+    withTiming, 
+    runOnJS, 
 } from "react-native-reanimated"
 import { MaterialCommunityIcons as Icon } from "@expo/vector-icons"
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -25,7 +27,9 @@ export default function EvolvingWriteButton(){
     const { width } = Dimensions.get("window")
     const textInputRef = useRef() //allows us to focus or blur the TextInput whenever we open or close the editor
     const animation = useSharedValue(0) //This is a reversible an imation so we only have a single animated value that defaults to 0
-
+    const isEditorOpened = useRef(null)
+    /** Reversing the animation works, but we dont want it, so we just control the pointerEvents on the button laying over the toolBar */
+    const [editorPointerEvent, SetEditorPointerEvent] = useState(false)
     
     /** Half way through the animation we want to have the toolBar to be full width */
     const editorWidthStyle = useAnimatedStyle(() => {
@@ -35,6 +39,9 @@ export default function EvolvingWriteButton(){
             /**
              * 100, is width of the bar when the editor is closed. 
              * width - 50 is the final width. On your own you can interpolate this width based in percentage but we are going off the width of the screen
+             * 
+             * We will have the effect of the ToolBar shrinking to the width of the Button and disappear in the reverse, the toolBar will expand to its 
+             * fullWidth and this button will disappear
              */
             [100, width - 50],
             Extrapolate.CLAMP
@@ -95,6 +102,25 @@ export default function EvolvingWriteButton(){
     })
     //End hiding button Text
 
+    const toggleTransform = () => {
+        /** 
+         * Remember that once the toolBar expands, the button is will absolutely positioned
+         * We could control mounting and unmounting that component but we will use the 
+         * pointer-events technique
+        */
+       const toValue = isEditorOpened.current ? 0 : 1
+
+       const updateEditor = () => {      
+            isEditorOpened.current = !isEditorOpened.current
+            SetEditorPointerEvent(isEditorOpened.current)
+        }
+       
+        animation.value = withTiming(toValue, { duration: 550 }, (finished) => {
+            //more on runJS reanimated2 here https://docs.swmansion.com/react-native-reanimated/docs/worklets
+            runOnJS(updateEditor)()
+        })
+    }
+
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
             <View style={[styles.container, styles.center]}>
@@ -124,8 +150,12 @@ export default function EvolvingWriteButton(){
                         <Animated.View 
                             /**Our button is rendered inside the bar, so that it will have the blue background */
                             style={[StyleSheet.absoluteFill, styles.center, buttonStyle]}
+                            /**
+                             * We used pointer events because we want the icons to still be interactable as well 
+                             * even though the button is on top of the icons */
+                            pointerEvents={editorPointerEvent? "none" : "auto"}
                         >
-                            <TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={toggleTransform}>
                                 <View>
                                     <Text style={styles.buttonText}>Write</Text>
                                 </View>
