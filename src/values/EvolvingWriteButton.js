@@ -46,6 +46,16 @@ export default function EvolvingWriteButton(){
                                 <Icon name="arrow-down-bold-box" color="#FFF" size={20} />
                             </View>
                         </Animated.View>
+                        <Animated.View 
+                            /**Our button is rendered inside the bar, so that it will have the blue background */
+                            style={[StyleSheet.absoluteFill, styles.center]}
+                        >
+                            <TouchableWithoutFeedback>
+                                <View>
+                                    <Text style={styles.buttonText}>Write</Text>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </Animated.View>
                     </View>
                     <Animated.View /** The will be our insert text input that slides up */
                         style={styles.lowerView}
@@ -102,6 +112,9 @@ const styles = StyleSheet.create({
     input: {
         padding: 10,
         fontSize: 20,
+    },
+    buttonText: {
+        color: Colors.back,
     },
 })
 
