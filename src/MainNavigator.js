@@ -20,6 +20,7 @@ import UnmountAnimation, { UnmountAnimationOptions } from "./components/UnmountA
 import XYZReaderComponent, { XYZReaderComponentOptions } from "./components/XYZReaderComponent"
 import XYZReaderDetails, { XYZReaderDetailsOptions } from "./components/XYZReaderDetails"
 import { Strings } from "./values"
+import EvolvingWriteButton, { EvolvingWriteButtonOptions } from "./values/EvolvingWriteButton"
 
 const Stack = createSharedElementStackNavigator()
 const MainNavigator = () => (
@@ -129,6 +130,11 @@ const MainNavigator = () => (
       name={Strings.component_application_intro}
       component={ApplicationIntro}
       options={ApplicationIntroOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_evolve_write_button}
+      component={EvolvingWriteButton}
+      options={EvolvingWriteButtonOptions}
     />
   </Stack.Navigator>
 )

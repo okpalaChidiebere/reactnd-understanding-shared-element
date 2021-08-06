@@ -137,6 +137,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressEvolveWriteButton = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_evolve_write_button)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -344,6 +351,17 @@ export default function MainComponent(props){
               <Heading3>Application Intro Screen</Heading3>
               <Caption style={styles.description}>The key for all of this is that we setup our interpolations based upon the contentOffset
                of our scroll view. On our x axis since we will be scrolling horizontal.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressEvolveWriteButton}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Evolving Write Button</Heading3>
+              <Caption style={styles.description}>Sometimes it makes sense to start with the view you are attempting to animate to. Here we will start with our end editor animation and slowly work it down to a button. </Caption>
             </View>
           </View>
         </TouchableOpacity>
