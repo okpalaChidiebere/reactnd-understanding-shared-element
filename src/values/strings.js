@@ -24,4 +24,5 @@ export const Strings = {
     component_application_intro: "Application Intro",
     component_evolve_write_button: "Evolving Write Button",
     component_modal_with_animation: "Animated Modal Swipe Away in React Native",
+    component_input_with_success_message: "Input with Success Message",
 }

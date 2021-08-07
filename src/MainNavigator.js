@@ -22,6 +22,7 @@ import XYZReaderDetails, { XYZReaderDetailsOptions } from "./components/XYZReade
 import EvolvingWriteButton, { EvolvingWriteButtonOptions } from "./components/EvolvingWriteButton"
 import { Strings } from "./values"
 import ModalWithAnimatedSwipeAway, { ModalWithAnimatedSwipeAwayOptions } from "./components/ModalWithAnimatedSwipeAway"
+import InputwithSuccessMessage, { InputwithSuccessMessageOptions } from "./components/InputwithSuccessMessage"
 
 const Stack = createSharedElementStackNavigator()
 const MainNavigator = () => (
@@ -141,6 +142,11 @@ const MainNavigator = () => (
       name={Strings.component_modal_with_animation}
       component={ModalWithAnimatedSwipeAway}
       options={ModalWithAnimatedSwipeAwayOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_input_with_success_message}
+      component={InputwithSuccessMessage}
+      options={InputwithSuccessMessageOptions}
     />
   </Stack.Navigator>
 )
