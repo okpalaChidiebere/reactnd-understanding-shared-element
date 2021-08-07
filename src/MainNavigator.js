@@ -23,6 +23,7 @@ import EvolvingWriteButton, { EvolvingWriteButtonOptions } from "./components/Ev
 import { Strings } from "./values"
 import ModalWithAnimatedSwipeAway, { ModalWithAnimatedSwipeAwayOptions } from "./components/ModalWithAnimatedSwipeAway"
 import InputwithSuccessMessage, { InputwithSuccessMessageOptions } from "./components/InputwithSuccessMessage"
+import ExplodingHeartButton, { ExplodingHeartButtonOptions } from "./components/ExplodingHeartButton"
 
 const Stack = createSharedElementStackNavigator()
 const MainNavigator = () => (
@@ -147,6 +148,11 @@ const MainNavigator = () => (
       name={Strings.component_input_with_success_message}
       component={InputwithSuccessMessage}
       options={InputwithSuccessMessageOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_exploding_hearts}
+      component={ExplodingHeartButton}
+      options={ExplodingHeartButtonOptions}
     />
   </Stack.Navigator>
 )

@@ -117,3 +117,5 @@ This works well for images, however there are cases where you want to do text, e
 # Modal Swipe Away
 - [https://codedaily.io/courses/Master-React-Native-Animations/Create-a-Social-Comment-Modal-with-Animated-Swipe-Away-in-React-Native](https://codedaily.io/courses/Master-React-Native-Animations/Create-a-Social-Comment-Modal-with-Animated-Swipe-Away-in-React-Native)
 
+# Evolve Write button
+[Source code with React-Native](https://github.com/browniefed/examples/blob/realworld/notifybutton/realworld/app.android.js)

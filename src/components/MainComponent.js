@@ -158,6 +158,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressExplodingHearts = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_exploding_hearts)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -399,6 +406,18 @@ export default function MainComponent(props){
               <Heading3>Expanding Notify Input with Success Message</Heading3>
               <Caption style={styles.description}>In this lesson we'll create a notify button that expands from the middle to show a TextInput with a send button and once sent 
               will hide the TextInput and show a thank you message.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressExplodingHearts}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Exploaing Hearts with Button</Heading3>
+              <Caption style={styles.description}>we'll create a like button that explodes with hearts. We'll use Animated.parallel to execute the bouncy heart animation as well
+               as the series of hearts exploding at the same time.</Caption>
             </View>
           </View>
         </TouchableOpacity>
