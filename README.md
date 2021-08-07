@@ -113,3 +113,7 @@ This works well for images, however there are cases where you want to do text, e
 # Evolving Write Button
 - This animation was inspired by Mike Dick on [dribbble](https://dribbble.com/shots/3046893)
 - Animation BreakDown [here](https://codedaily.io/courses/Master-React-Native-Animations/Evolving-Write-Button-Breakdown)
+
+# Modal Swipe Away
+- [https://codedaily.io/courses/Master-React-Native-Animations/Create-a-Social-Comment-Modal-with-Animated-Swipe-Away-in-React-Native](https://codedaily.io/courses/Master-React-Native-Animations/Create-a-Social-Comment-Modal-with-Animated-Swipe-Away-in-React-Native)
+
