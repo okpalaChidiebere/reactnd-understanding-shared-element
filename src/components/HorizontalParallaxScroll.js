@@ -6,7 +6,7 @@ import {
   View,
   Dimensions,
 } from "react-native"
-import Animated, { useSharedValue, useAnimatedScrollHandler } from "react-native-reanimated"
+import Animated, { useSharedValue, useAnimatedScrollHandler, interpolate, Extrapolate, useAnimatedStyle } from "react-native-reanimated"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 import Moment from "./Moment"
@@ -19,6 +19,47 @@ const Images = [
     { image: require("../assets/stories/3.jpg"), title: "Mule" },
     { image: require("../assets/stories/4.jpg"), title: "Strawberry DiaQuir" },
 ]
+
+/**
+ * 
+ * @param {*} animatedScroll 
+ * @param {*} i the current index of page we are on
+ * @param {*} imageLength current amount of images that we have
+ * @returns an interpolation of the translateX in the style
+ */
+const getAnimatedStyle = (animatedScroll, i, imageLength) => {
+    const inputRange = [
+      (i - 1) * width, // set up the translateX for the image before it is swiped to
+      i * width,  // the translateX for when we are at the image
+      (i + 1) * width //the translateX after we have swiped away from the image
+    ];
+  
+    const outputRange = i === 0 
+        // here we are at the first index
+        ? [0, 0, 150] 
+        /** 
+         * - The image will be -300 as we are swiping towards it
+         * - When at width we do don't translate (we move towards 0)
+         * - The image will translate 150 left as we swipe past it
+        */
+        : [-300, 0, 150]
+  
+    
+    return useAnimatedStyle(() => {
+        return {
+            transform: [
+                { 
+                    translateX: interpolate(
+                        animatedScroll.value,
+                        inputRange,
+                        outputRange,
+                        Extrapolate.CLAMP
+                    ) 
+                }
+            ]
+        }
+    })
+}
 
 export default function HorizontalParallaxScroll(){
     const animatedScroll = useSharedValue(0)
@@ -39,6 +80,7 @@ export default function HorizontalParallaxScroll(){
                             <Moment 
                               key={i}
                               {...image} //pass on the image properties as props "image" and "title"
+                              animatedStyle={getAnimatedStyle(animatedScroll, i, Images.length)}
                             />
                         )
                     })}

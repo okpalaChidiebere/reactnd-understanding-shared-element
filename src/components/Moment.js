@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Animated from "react-native-reanimated"
 const { width, height } = Dimensions.get("window")
 
-export default function Moment({ title, image }){
+export default function Moment({ title, image, animatedStyle }){
     return (
         <View style={styles.container}>
             <Animated.Image
                 source={image}
-                style={[styles.image]}
+                style={[styles.image, animatedStyle]}
                 resizeMode="cover"
             />
             <View style={[StyleSheet.absoluteFill, styles.center]}>
