@@ -24,6 +24,7 @@ import { Strings } from "./values"
 import ModalWithAnimatedSwipeAway, { ModalWithAnimatedSwipeAwayOptions } from "./components/ModalWithAnimatedSwipeAway"
 import InputwithSuccessMessage, { InputwithSuccessMessageOptions } from "./components/InputwithSuccessMessage"
 import ExplodingHeartButton, { ExplodingHeartButtonOptions } from "./components/ExplodingHeartButton"
+import FloatingHearts, { FloatingHeartsOptions } from "./components/FloatingHearts"
 
 const Stack = createSharedElementStackNavigator()
 const MainNavigator = () => (
@@ -153,6 +154,11 @@ const MainNavigator = () => (
       name={Strings.component_exploding_hearts}
       component={ExplodingHeartButton}
       options={ExplodingHeartButtonOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_floating_hearts}
+      component={FloatingHearts}
+      options={FloatingHeartsOptions}
     />
   </Stack.Navigator>
 )

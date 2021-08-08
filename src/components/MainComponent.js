@@ -165,6 +165,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressFloatinghearts = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_floating_hearts)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -418,6 +425,17 @@ export default function MainComponent(props){
               <Heading3>Exploaing Hearts with Button</Heading3>
               <Caption style={styles.description}>we'll create a like button that explodes with hearts. We'll use Animated.parallel to execute the bouncy heart animation as well
                as the series of hearts exploding at the same time.</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressFloatinghearts}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Floating Hearts</Heading3>
+              <Caption style={styles.description}>Tap to Show Love Floating Hearts</Caption>
             </View>
           </View>
         </TouchableOpacity>
