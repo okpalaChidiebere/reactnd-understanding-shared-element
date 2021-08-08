@@ -67,11 +67,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    heart: {
-        position: "absolute",
-        top: 0,
-        left: 0
-    }
 })
 
 export function FloatingHeartsOptions(){

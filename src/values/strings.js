@@ -27,4 +27,5 @@ export const Strings = {
     component_input_with_success_message: "Input with Success Message",
     component_exploding_hearts: "Exploding Hearts",
     component_floating_hearts: "Floating Hearts",
+    component_horizontal_parallax: "Horizontal Parallax ScrollView",
 }

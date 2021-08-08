@@ -172,6 +172,13 @@ export default function MainComponent(props){
     }
   }
 
+  const onPressHorizontalParallaxScroll = () => {
+    const { navigation } = props
+    if (navigation) {
+      navigation.push(Strings.component_horizontal_parallax)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
       <ScrollView style={styles.content} endFillColor={Colors.empty}>
@@ -436,6 +443,17 @@ export default function MainComponent(props){
             <View style={styles.demoItemContent}>
               <Heading3>Floating Hearts</Heading3>
               <Caption style={styles.description}>Tap to Show Love Floating Hearts</Caption>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={onPressHorizontalParallaxScroll}
+        >
+          <View style={styles.demoItemContainer}>
+            <View style={styles.demoItemContent}>
+              <Heading3>Horizontal Parallax Scoll</Heading3>
+              <Caption style={styles.description}>Create a Horizontal Parallax ScrollView</Caption>
             </View>
           </View>
         </TouchableOpacity>

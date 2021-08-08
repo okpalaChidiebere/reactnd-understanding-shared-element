@@ -25,6 +25,7 @@ import ModalWithAnimatedSwipeAway, { ModalWithAnimatedSwipeAwayOptions } from ".
 import InputwithSuccessMessage, { InputwithSuccessMessageOptions } from "./components/InputwithSuccessMessage"
 import ExplodingHeartButton, { ExplodingHeartButtonOptions } from "./components/ExplodingHeartButton"
 import FloatingHearts, { FloatingHeartsOptions } from "./components/FloatingHearts"
+import HorizontalParallaxScroll, { HorizontalParallaxScrollOptions } from "./components/HorizontalParallaxScroll"
 
 const Stack = createSharedElementStackNavigator()
 const MainNavigator = () => (
@@ -159,6 +160,11 @@ const MainNavigator = () => (
       name={Strings.component_floating_hearts}
       component={FloatingHearts}
       options={FloatingHeartsOptions}
+    />
+    <Stack.Screen
+      name={Strings.component_horizontal_parallax}
+      component={HorizontalParallaxScroll}
+      options={HorizontalParallaxScrollOptions}
     />
   </Stack.Navigator>
 )
