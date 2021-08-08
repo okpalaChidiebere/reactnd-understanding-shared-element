@@ -1,25 +1,35 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   StyleSheet,
-  Text,
   View,
   Dimensions,
   TouchableWithoutFeedback
 } from "react-native"
-import Animated, { } from "react-native-reanimated"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 import Heart from "./Heart"
 
 
 function getRandomInt(min, max){
-    min = Math.ceil(min)
-    max = Math.floor(max)
-    return Math.floor(Math.random() * (max - min)) - min
+    return Math.floor(Math.random() * (max - min)) + min
 }
 export default function FloatingHearts(){
 
+    const { width } = Dimensions.get("window")
+    const [state, setState] = useState({
+        hearts: []
+    })
+
     const handleAddheart = () => {
+        //NOTE: we wanted to make sure that all of the state has flushed throught thats is why we passed the callback to setState
+        setState((currState) => ({
+            hearts: [
+                ...currState.hearts,
+                {
+                    start: getRandomInt(100, width - 100)//a starting position along the bottom of the screen
+                }
+            ]
+        }))
 
     }
 
@@ -28,7 +38,20 @@ export default function FloatingHearts(){
             <View style={[styles.container, styles.center]}>
                 <TouchableWithoutFeedback onPress={handleAddheart}>
                     <View style={StyleSheet.absoluteFill}>
-
+                        {state.hearts.map(({ start }, index) => (
+                            <Heart 
+                                key={index}
+                                filled
+                                style={{ 
+                                    /**
+                                     * This style property is important. Without this 
+                                     * you will not see somany hearts appear in the screens 
+                                     * */ 
+                                    position: "absolute",
+                                }} 
+                                startPosition={start}
+                            />
+                        ))}
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -48,7 +71,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 0,
         left: 0
-      }
+    }
 })
 
 export function FloatingHeartsOptions(){

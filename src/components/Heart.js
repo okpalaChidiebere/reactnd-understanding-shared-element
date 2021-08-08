@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native"
+import { View, StyleSheet, Dimensions } from "react-native"
 import Animated, { 
     interpolate, 
     useAnimatedStyle, 
@@ -7,10 +7,12 @@ import Animated, {
     withDelay, 
     withSpring,
     withTiming,
+    Extrapolate,
  } from "react-native-reanimated"
 
 const Heart = ({ filled, isLiked, style, ...props }) => {
     const animation = useSharedValue(0)
+    const { height } = Dimensions.get("window")
 
     const animatedStyle = useAnimatedStyle(() => {
         let style = { }
@@ -69,6 +71,66 @@ const Heart = ({ filled, isLiked, style, ...props }) => {
                     { scale: bouncyHeart }
                 ]
             }
+        } else if(props.startPosition){
+
+          //The heart floating will consist of a series of animations
+          const positionInterpolate = interpolate(
+            animation.value,
+            [0, height],
+            [height - 50, 0], //we subtracted 50 from height because our height is 50px in height.
+
+          )
+          //the heart opacity will be one at starting position, and as it slides up, it will fade out
+          const opacityInterpolate = interpolate(
+              animation.value,
+              [0, height - 200],
+              [1, 0],
+          )
+
+          //The scale will make our heart to bubble up very quickly starting at 0 and look like it emerged on the scene
+          const scaleInterpolate = interpolate(
+              animation.value,
+              [0, 15, 20],
+              [0, 1.2, 1], //the heart will grow to 1.2 times its size and then back to its normal size
+              Extrapolate.CLAMP //we dont want the heart to continue on scaling
+          )
+
+          //we want the heart to wobble 6 times on its way up
+          const divideheight = height/6
+          const wobbleInterpolate = interpolate(
+              animation.value,
+              [
+                  0, 
+                  divideheight * 1,
+                  divideheight * 2,
+                  divideheight * 3,
+                  divideheight * 4,
+                  divideheight * 5,
+                  divideheight * 6
+              ],
+              //we just wobble back and forth between 15 and -15
+              [
+                  0,
+                  15,
+                  -15,
+                  15,
+                  -15,
+                  15,
+                  -15
+              ],
+              Extrapolate.CLAMP
+          )
+
+
+          style = {
+              left: props.startPosition,//we want a random start position
+              transform: [
+                  { translateY: positionInterpolate },
+                  { scale: scaleInterpolate },
+                  { translateX: wobbleInterpolate }
+              ],
+              opacity: opacityInterpolate,
+          }
         }
         
         return style
@@ -92,6 +154,9 @@ const Heart = ({ filled, isLiked, style, ...props }) => {
                     withTiming(props.effect.toValue, { duration: 50 })
                 )
             }
+        } else if(props.startPosition){
+          //Start the floating hearts animation
+          animation.value = withTiming(height, { duration: 3000 })
         }
     }, [ props ])
 
