@@ -1,8 +1,6 @@
-import React, {  } from "react"
+import React from "react"
 import {
-  Image,
   StyleSheet,
-  Text,
   View,
   Dimensions,
 } from "react-native"
@@ -12,7 +10,7 @@ import { Colors, Strings } from "../values"
 import Moment from "./Moment"
 
 
-const { width, height } = Dimensions.get("window") //returns the current dimensions of the phone screen
+const { width } = Dimensions.get("window") //returns the current dimensions of the phone screen
 const Images = [
     { image: require("../assets/stories/1.jpg") , title: "Vodca Cran" },
     { image: require("../assets/stories/2.jpg"), title: "Old Fashion" },
@@ -61,6 +59,26 @@ const getAnimatedStyle = (animatedScroll, i, imageLength) => {
     })
 }
 
+const getSeparator = (i) => {
+    return (
+      <View
+        key={i}
+        style={[
+            styles.separator, 
+            { 
+                /**
+                 * This is the position where the separtor will be just at the begining 
+                 * of each image
+                 * Eg: for the first image(index0), we will add position the separator 
+                 * at the begining before we render the image
+                 *  */
+                left: i * width - 2.5 
+            }
+        ]} 
+      />
+    )
+}
+
 export default function HorizontalParallaxScroll(){
     const animatedScroll = useSharedValue(0)
     return (
@@ -84,6 +102,13 @@ export default function HorizontalParallaxScroll(){
                             />
                         )
                     })}
+                    {
+                        /** Array.apply() method creates an empty array
+                         * 
+                         * we added + 1 because thwe want the separator in the final screen as well 
+                         */
+                        Array.apply( null, { length: Images.length + 1 } ).map((_, i) => getSeparator(i))
+                    }
                 </Animated.ScrollView>
             </View>
         </SafeAreaView>
@@ -94,6 +119,13 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: "#333",
+    },
+    separator: {
+        backgroundColor: '#000',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        width: 5,
     },
 })
 

@@ -124,3 +124,6 @@ This works well for images, however there are cases where you want to do text, e
 - I used reanimated to inplement this. If you want to check out the code where just normal RN Animated was used look at [here](https://github.com/browniefed/examples/blob/realworld/explodinghearts/realworld/app.android.js).
 - This youtube [video](https://codedaily.io/tutorials/Creating-Animated-Rings-with-React-Native-Reanimated) about exploding rings in reanimated helped me learn how i can go about implementing this in reanimated. It was a but tricky, because with re-animated, there is no way of running animations for different views in parallel. So to get this done, you will have to use React States which i did. Also there is no stagger animations with ReAnimatedV2 but you you work around this as well. EOD, Reanimated, encourages using re-usable components for your animated views as much as you can.
 - If you want to understand how the heart was built watch this [video](https://codedaily.io/courses/Master-React-Native-Animations/Bounce-a-Heart-Shaped-Button-in-React-Native-on-Press)
+
+# Horizontal Parallax ScrollView
+- In this lesson we'll create a Twitter Moments clone with a horizontal parallax image scrolling effect. We'll use useAnimatedScrollHandler and interpolation from reanimated to make the effect work.
