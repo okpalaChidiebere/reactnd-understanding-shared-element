@@ -1,132 +1,165 @@
-import React, { useState, useRef } from "react"
+import React, { useState } from "react"
 import {
   StyleSheet,
   Text,
   View,
   ImageBackground,
-  Animated,
-  PanResponder,
 } from "react-native"
+import Animated, { 
+    useSharedValue, 
+    useAnimatedGestureHandler,
+    useAnimatedStyle,
+    withSpring,
+} from "react-native-reanimated"
+import { PanGestureHandler } from "react-native-gesture-handler"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 
-const initialState = [
-    {
-      image: require("../assets/avatars/andrea.schmidt.png"),
-      animation: new Animated.ValueXY(), //this helps us control the exact position for each of the heads
-      text: "Drag Me",
-    },
-    {
-      image: require("../assets/avatars/andrea.schmidt.png"),
-      animation: new Animated.ValueXY(),
-    },
-    {
-      image: require("../assets/avatars/andrea.schmidt.png"),
-      animation: new Animated.ValueXY(),
-    },
-    {
-      image: require("../assets/avatars/andrea.schmidt.png"),
-      animation: new Animated.ValueXY(),
-    },
-]
+const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground)
+
+const Head = ({ item, isFirst, pan }) => {
+
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                {
+                    translateX: item.animationX.value,
+                },
+                {
+                    translateY: item.animationY.value,
+                },
+            ]
+        }
+    })
+
+    return (
+        isFirst 
+        ? (
+            <PanGestureHandler onGestureEvent={pan}>
+                <AnimatedImageBackground
+                    source={item.image}
+                    style={[
+                        styles.head,
+                        animatedStyle
+                    ]}
+                >
+                {item.text && <Text>
+                    {item.text}
+                </Text>}
+                </AnimatedImageBackground>
+            </PanGestureHandler>
+        )
+        : (
+            <AnimatedImageBackground
+                source={item.image}
+                style={[
+                    styles.head,
+                    animatedStyle
+                ]}
+            >
+            {item.text && <Text>
+                {item.text}
+            </Text>}
+            </AnimatedImageBackground>
+        )
+    )
+}
 
 export default function StaggeredHeadDrag({ }){
 
-    const [heads, setHeads] = useState(initialState)
+    const initialState = [
+        {
+          image: require("../assets/avatars/andrea.schmidt.png"),
+          //this helps us control the exact position for each of the heads
+          animationX: useSharedValue(0),
+          animationY: useSharedValue(0),
+          text: "Drag Me",
+        },
+        {
+          image: require("../assets/avatars/andrea.schmidt.png"),
+          animationX: useSharedValue(0),
+          animationY: useSharedValue(0),
+        },
+        {
+          image: require("../assets/avatars/andrea.schmidt.png"),
+          animationX: useSharedValue(0),
+          animationY: useSharedValue(0),
+        },
+        {
+          image: require("../assets/avatars/andrea.schmidt.png"),
+          animationX: useSharedValue(0),
+          animationY: useSharedValue(0),
+        },
+    ]
 
-    const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground)
+    const [heads, setHeads] = useState(initialState)
 
     /** 
      * When we were breaking down the animation, we noticed that we will have to so some sort of drag
      * This means we will set up a PanResonder and it is only going to be a single PanResponder for our first
      * top draggable head
      * */
-    const panResponder = useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: (e, gestureState) => true,
-            onMoveShouldSetPanResponder: (evt, gestureState) => true,
-            onPanResponderGrant: (e, gestureState) => {
+    const headDragGestureHandler = useAnimatedGestureHandler({
+        onStart(event, context){
+            /** 
+             * Since we know the View you are dragging is going to stay where its at after being dragged we will need to store the 
+             * previous position of the view so that you can continue to drag the head from that exact same position where you left
+             * 
+             * We are going to store this previous translateX and translateY in the context. we will retrive this value stored when
+             * we start dragging(onActive)
+             * */
+            context.translateX = heads[0].animationX.value
+            context.translateY = heads[0].animationY.value
+        },
+        onActive(event, context){
+            //We only want to setValues for the first Head.
+            //NOTE: we still access headElemet from index 0 because we rendered a copy of the heads in reverse order. so it dont affect the order of our main head
+            heads[0].animationX.value = event.translationX + context.translateX
+            heads[0].animationY.value = event.translationY + context.translateY
+
+            /** Now we control the other heads to stagger to wherever you drag the first head */
+            heads.slice(1).map //we did not pick the first head because we are not staggering it
+            (({ animationX, animationY }, index ) => {
                 /** 
-                 * Since we know the View you are dragging is going to stay where its at after being dragged we will need to use an extract offset.
-                 * We are going to need to map over all the animated values and extract the offSet for each one 
+                 * Each head will have to sprint to the new loaction once the first head moves
+                 * This will have each head operating on a separate spring animation. 
+                 * The for each spring animation, we make each head heavier so a stagger effect will actually happen
+                 * 
+                 * FYI: using a withDelay before each spring animation will not cause the effect we want
                  * */
-                heads.map(({ animation }) => {
-                    /**
-                     * Reset Animated.ValueXY to 0. This will keep your finger and the top head together as you drag. 
-                     * if you dont do this there will be an increasing space between your finger and the item you are dragging while you drag. 
-                     * We dont want that
-                     */
-                    animation.extractOffset()
-
-                    /**
-                     * extractOffset was suppose to set x and y values to 0 but it actually did not
-                     * This resulted ins a space between the first item that has the panHandler and the other heads. So the dragging looked of
-                     * This also resulted to the heads at the back being thrown off screen after you finished dragging the first item. But visually you will see it there
-                     */
-                    animation.setValue({ x: 0, y: 0 }) //necessary was necessary
-                })
-            },
-            onPanResponderMove: (e, { dx, dy }) => {
-                //We only want to setValues for the first Head.
-                heads[0].animation.setValue({
-                    x: dx,
-                    y: dy,
-                })
-
-                /** Now lets control the other heads to  stagger to wherever you drag the first head*/
-                const otherHeads = heads.slice(1).map //we did not pick the first head because we are not staggering it
-                (({ animation }, index ) => {
-                    /** 
-                     * Each head will have to sprint to the new loaction once the first head moves
-                     * This will have each head operating on a separate animation. So a stagger will actually happen */
-                    Animated.sequence([
-                        Animated.delay(index * 10), //we want to cause a delay for each animation base don the head. This will create the small distance between heads
-                        Animated.spring(animation, {
-                            toValue: { x: dx, y: dy },
-                            useNativeDriver: false,
-                        }),
-                    ]).start()
-
-                    /** 
-                     * Note the animatins we implementd is similar to Animated.stagger() But using Animated.stagger did not really gve us the effect we want
-                     * https://codedaily.io/courses/Master-React-Native-Animations/Stagger
-                     * */
-                })
-            },
-            // onPanResponderRelease: (e, gestaureState) => {} //Since mo release animation, so we dont need this. But theoretically you 
-            //could animate and lock a head to either the left or right side depending on it's position.
-        })
-    ).current
+                animationX.value = withSpring(
+                    event.translationX + context.translateX, 
+                    { mass: index + .2, damping: 15 }
+                )
+                animationY.value = withSpring(event.translationY + context.translateY, { mass: index + .2, damping: 15 })
+            })
+        },
+    })
 
     return (
         <SafeAreaView style={styles.container} edges={["bottom", "left", "right"]}>
             <View style={styles.container}>
                 {heads
                 .slice(0) //shallow clone the heads
-                .reverse() //revers the list so the first head will actually appear on top so that we can drag it around. The did this same thing for KittenCards
+                /**
+                 * The order in which you render elements in react native matters.
+                 * 
+                 * we reverse the list so the first head will actually appear on top 
+                 * so that we can drag it around. Another way you can tackle thiis without
+                 * reversing the list is by setting the z-index for the heads but this will do
+                 */
+                .reverse()
                 .map((item, index, items) => {
-
-                    //Beacuse the  item we want to drag is at the end, we have to chack for it
-                    const pan = index === items.length - 1 
-                    ? panResponder.panHandlers : {} //NOTE: we returned an empty object so that we can continue the spread on all of the images
+                    //console.log(index, items.length - 1)
+                    //console.log(item.text)
                     return (
-                        <AnimatedImageBackground
-                            {...pan}
-                            key={index /**Remember ideally you want to use Ids. But for now this will do */}
-                            source={item.image}
-                            //imageStyle={{ borderRadius: 40 }}
-                            style={[
-                                styles.head,
-                                {
-                                    transform: item.animation.getTranslateTransform() //craft the translateXY for us
-                                }
-                            ]}
-                        >
-                        <Text>
-                            {item.text}
-                        </Text>
-                        </AnimatedImageBackground>
-                    );
+                        <Head 
+                            key={index /**Remember ideally you want to use Ids. But for now this will do */} 
+                            item={item}
+                            isFirst={index === items.length - 1} //Beacuse the item we want to drag is at the end, we have to check for it
+                            pan={headDragGestureHandler}
+                        />
+                    )
                 })}
             </View>
         </SafeAreaView>
@@ -147,6 +180,11 @@ const styles = StyleSheet.create({
         position: "absolute", //position of abosolute make sure the items are free floating; So the heads will stack on top of each other
         alignItems: "center",
         justifyContent: "center",
+        /**
+         * FYI: the alignItems and justifyCOntent of center will actually work 
+         * even though our element has a position of absolute because we did not
+         *  specify the top, left, right, bottom attributes
+         */
     },
 })
 
