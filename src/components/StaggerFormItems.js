@@ -6,24 +6,31 @@ import {
   TouchableOpacity,
   View,
   ImageBackground,
-  Animated,
   KeyboardAvoidingView,
 } from "react-native"
+import Animated, { 
+    useSharedValue, 
+    useAnimatedStyle,
+    withTiming,
+    withDelay,
+    interpolate,
+    runOnJS,
+} from "react-native-reanimated"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
 
 export default function StaggerFormItems(){
-    const email = useRef(new Animated.Value(0)).current
-    const password = useRef(new Animated.Value(0)).current
-    const button = useRef(new Animated.Value(0)).current
+    const email = useSharedValue(0)
+    const password = useSharedValue(0)
+    const button = useSharedValue(0)
     /**
      * We get the reference to the input that we want to focus first,
      * so that once our animation is complete, we will focus on the 
      * first form filed and the keyboard will come up. 
      * 
-     * We don't wantthe keyboard to come up during the animation.
+     * We don't want the keyboard to come up during the animation.
      */
     const emailRef = useRef()
 
@@ -33,55 +40,58 @@ export default function StaggerFormItems(){
      * This way our we write more clean code.
      *  */
      const createAnimationStyle = (animation) => {
-         //we need an interpolation for translateY
-        const translateY = animation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [-5, 0], //we will start the postion of each items slightly higher(-5) and animate to an offset(0)
+        return useAnimatedStyle(() => {
+            //we need an interpolation for translateY
+            const translateY = interpolate(
+                animation.value,
+                [0, 1],
+                [-5, 0], //we will start the postion of each items slightly higher(-5) and animate to an offset(0)
+            )
+
+            return {
+                opacity: animation.value, //we know our Animated.Value is going from 0 to 1, so we can just used that same value for opacity :)
+                transform: [
+                  {
+                    translateY,
+                  },
+                ],
+            }
         })
-      
-        return {
-          opacity: animation, //we know our Animated.Value is going from 0 to 1, so we can just used that same value for opacity :)
-          transform: [
-            {
-              translateY,
-            },
-          ],
-        }
     }
 
-    //called right after the component mounts
+    const popUpKeyBoard = () => {
+        /**
+        * when dealing with forms, focus the form field for the users so 
+         * they do not have to tap on the form field. */
+         emailRef.current.focus() //we can now focus on our email input
+    }
+
+    //called right after the component mounts were we start the animation
     useLayoutEffect(() => {
 
         //we dont realy need to craft our own stagger like we did for staggered heads :)
         //we have a stagger of 100ms between each animation
-        /**
-         * 
-         */
-        const anim = Animated.stagger(100, [
-            Animated.timing(email, {
-              toValue: 1,
-              duration: 400,
-              useNativeDriver: true,
+        email.value = withDelay(
+            100,
+            withTiming(1, {
+                duration: 400,
             }),
-            Animated.timing(password, {
-              toValue: 1,
-              duration: 400,
-              useNativeDriver: true,
+        )
+        password.value = withDelay(
+            200,
+            withTiming(1, {
+                duration: 400,
             }),
-            Animated.timing(button, {
-              toValue: 1,
-              duration: 400,
-              useNativeDriver: true,
+        )
+        button.value = withDelay(
+            300,
+            withTiming(1, {
+                duration: 400,
+            }, () => {
+                runOnJS(popUpKeyBoard)()
             }),
-        ])
-
-        //we start the animation
-        anim.start(() => {
-            /**
-             * when dealing with forms, focus the form field for the users so 
-             * they do not have to tap on the form field. */
-            emailRef.current.focus() //we can now focus on our email input
-        })
+        )
+        
     }, [ ])
     
 
