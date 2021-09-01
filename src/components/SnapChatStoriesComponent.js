@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef } from "react"
-import { StyleSheet, View, ScrollView, Dimensions, Animated, Easing } from "react-native"
+import { StyleSheet, View, ScrollView, Dimensions } from "react-native"
+import { useSharedValue, withTiming, Easing } from "react-native-reanimated"
 import StoryThumbnail from "./StoryThumbnail"
 import { Colors } from "../values"
 
@@ -55,7 +56,7 @@ export default function SnapChatStoriesComponent(){
 
   const animationArrays = useRef([])
 
-  const createAnimationStyle = (animation) => {
+  const setInitialPosition = (animation) => {
     //const maxWidthOffset = Number(width.toFixed(2))
     const maxWidthOffset = Dimensions.get("window").width / 2 - 16 * 2 //for grid, it makesense to use basically the item width. If it was not a grid, we would use the window width
     const maxHeightOffset = Number(height.toFixed(2))
@@ -65,37 +66,38 @@ export default function SnapChatStoriesComponent(){
     const yOffset = (Math.random() * (10 - (-10) + 1) + (-10)) * maxHeightOffset
     //more on random min max https://www.codegrepper.com/code-examples/javascript/generate+random+float+number+in+range+javascript
 
-    animation.setValue({ x: xOffset * -1, y: yOffset * -1 })
-  
-    return {
-      //opacity: animation, //if we wanted to fade in the item in, we will need a different animated value that goes from 0 to 1
-      transform: animation.getTranslateTransform()
-    }
+    animation.translateX.value = xOffset * -1
+    animation.translateY.value = yOffset * -1
   }
 
   useLayoutEffect(() => {
 
     /** craft us an array of timming animations that we will run in parallel */
-    const chaoticMotion = animationArrays.current.map( animation => {
-      return Animated.timing(animation, {
-        toValue: { x: 0, y: 0 },
-        duration: 1000,
-        useNativeDriver: true,
-        /**
-         * We crafted our own easing and applied to Easing.in
-         * https://animationbook.codedaily.io/animated-timing/
-         * https://reactnative.dev/docs/0.60/easing#bezier
-         * 
-         * You have to play around with thus bezier to make sure 
-         * motion is on a straight line. Make sure there is no overlapping paths 
-         * Read docs to learn more about this.
-         */
-        easing: Easing.in(Easing.bezier(.12,1,.62,0.95)), //this is similar to easeIn
-      })
+    animationArrays.current.map( animation => {  
+       // now animate the storyThumbnails back into their natural position    
+      animation.translateX.value = withTiming(0, 
+        { 
+          duration: 1000, 
+          /**
+           * We crafted our own easing and applied to Easing.in
+           * https://animationbook.codedaily.io/animated-timing/
+           * https://reactnative.dev/docs/0.60/easing#bezier
+           * 
+           * You have to play around with thus bezier to make sure 
+           * motion is on a straight line. Make sure there is no overlapping paths 
+           * Read docs to learn more about this.
+           */
+          easing: Easing.in(Easing.bezier(.12,1,.62,0.95)), //this is similar to easeIn
+        }
+      )
+      animation.translateY.value = withTiming(0, 
+        { 
+          duration: 1000, 
+          easing: Easing.in(Easing.bezier(.12,1,.62,0.95)), //this is similar to easeIn
+        }
+      )
     })
 
-    // now animate them back into their natural position
-    Animated.parallel(chaoticMotion).start()
   }, [])
 
     return (
@@ -103,11 +105,15 @@ export default function SnapChatStoriesComponent(){
             <ScrollView>
                 <View style={styles.container}>
                     {stories.map((story) => {
-                      const animation = new Animated.ValueXY()
-                      const animatedStyle = createAnimationStyle(animation)
+                      const animation = {
+                        translateX: useSharedValue(),
+                        translateY: useSharedValue(),
+                      }
+
+                      setInitialPosition(animation)
                       animationArrays.current.push(animation)
                       return (
-                        <StoryThumbnail key={story.id} story={story} animatedStyle={animatedStyle}/>
+                        <StoryThumbnail key={story.id} story={story} animation={animation}/>
                       )
                     })}
                 </View>

@@ -1,6 +1,9 @@
 import React, { useState } from "react"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
-import { Image, StyleSheet, Dimensions, Pressable, Animated } from "react-native"
+import { Image, StyleSheet, Dimensions, Pressable } from "react-native"
+import Animated, {
+    useAnimatedStyle,
+} from "react-native-reanimated"
 import { Strings } from "../values"
 import { SharedElement } from "react-navigation-shared-element";
 
@@ -11,7 +14,7 @@ const width = Dimensions.get("window").width / 2 - margin * 2
 
 
 
-export default function StoryThumbnail({ story, animatedStyle }){
+export default function StoryThumbnail({ story, animation }){
     const navigation = useNavigation()
     const [opacity, setOpacity] = useState(1)
 
@@ -20,6 +23,14 @@ export default function StoryThumbnail({ story, animatedStyle }){
             setOpacity(1) //once this screen is back on focus by the user navigating back, we make the listItem the user visited to be visible again! 
         }
     })
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        //opacity: animation, //if we wanted to fade in the item in, we will need a different animated value that goes from 0 to 1
+        transform: [
+          { translateX: animation.translateX.value },
+          { translateY: animation.translateY.value },
+        ]
+    }))
 
     return (
         <Pressable
