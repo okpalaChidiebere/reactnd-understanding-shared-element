@@ -5,8 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Animated,
 } from "react-native"
+import Animated, { 
+    useSharedValue, 
+    useAnimatedStyle,
+    withTiming,
+    withDelay,
+} from "react-native-reanimated"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 
@@ -26,25 +31,25 @@ export default function AnimatedNotifications(){
      * a specific height.
      */
     const notificationRef = useRef()
-    const opacity = useRef(new Animated.Value(0)).current
+    const opacity = useSharedValue(0)
     /**
      * We need to control the offset of our notification view. This will always be set 
      * to the height of the view right before we animate it.
      */
-    const offset = useRef(new Animated.Value(0)).current
+    const offset = useSharedValue(0)
 
-    const notificationStyle = {
-        opacity,
+    const notificationStyle = useAnimatedStyle(() => ({
+        opacity: opacity.value,
         transform: [
             {
                 /**
                  * we expect the initial position of this view to be off the screen 
                  * because we set a negative value offset after measurement of the notification container or wrapper
                  */
-                translateY: offset,
+                translateY: offset.value,
             },
         ],
-    }
+    }))
 
     const handlePress = () => {
         setState(currState => ({
@@ -54,6 +59,15 @@ export default function AnimatedNotifications(){
         //get the dynamic height of our view
         notificationRef.current.measure((x, y, width, height, pageX, pageY) => {
             /**
+             * We want these 2 animations to happen in sequence, animating 
+             * the notification in and out 
+             * 
+             * Additionally so our user can see the notification we'll delay 
+             * the animation that will hide the notification 
+            */
+
+
+            /**
              * multiplying the value by -1 converts the integer to a nagative value :)
              * 
              * When we set the offset animation to -height this will move the view on 
@@ -62,57 +76,20 @@ export default function AnimatedNotifications(){
              * so it won't be visible. This will make our notification look like it's sliding
              *  in from off screen.
              */
-            offset.setValue(height * -1)
+            offset.value = height * -1
 
             /**
-            * Animated.Parallel allow us to do multiple animations at once. 
-            * For us that means animating in our opacity and our offset.
+            * We are animating in our opacity and our offset in parallel.
             * */
-            const animateIn = Animated.parallel([
-                    Animated.timing(opacity, {
-                        toValue: 1,
-                        duration: 300,
-                        useNativeDriver: true,
-                    }),
-                    Animated.timing(offset, {
-                        /**
-                            * With our offset originally set at 0, this makes the notification 
-                            * visibly in it's original position. This is why we our doing the 
-                            * Animated.timing animation to 0.
-                            */
-                        toValue: 0,
-                        duration: 300,
-                        useNativeDriver: true,
-                    }),
-                ])
+            opacity.value = withTiming(1, { duration: 300 })
+            offset.value = withTiming(0, { duration: 300 })
 
             /**
              * animateOut is basically reverse of animateIn
              */
-            const animateOut = Animated.parallel([
-                    Animated.timing(opacity, {
-                        toValue: 0,
-                        duration: 300,
-                        useNativeDriver: true,
-                    }),
-                    Animated.timing(offset, {
-                        toValue: height * -1,
-                        duration: 300,
-                        useNativeDriver: true,
-                    }),
-                ])
-
-            /**
-             * We want these 2 animations to happen in sequence, so we will 
-             * need to use the Animated.sequence command to combine them. 
-             * Additionally so our user can see the notification we'll use 
-             * Animated.delay to wait before moving on to the hide animation.
-            */
-            Animated.sequence([
-                animateIn,
-                Animated.delay(1500),
-                animateOut,
-            ]).start()
+            opacity.value = withDelay(1500, withTiming(0, { duration: 300 }))
+            offset.value = withDelay(1500, withTiming(height * -1, { duration: 300 }))
+            
         })
     }
 
