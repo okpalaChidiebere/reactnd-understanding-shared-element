@@ -33,23 +33,7 @@ const Head = ({ item, isFirst, pan }) => {
     })
 
     return (
-        isFirst 
-        ? (
-            <PanGestureHandler onGestureEvent={pan}>
-                <AnimatedImageBackground
-                    source={item.image}
-                    style={[
-                        styles.head,
-                        animatedStyle
-                    ]}
-                >
-                {item.text && <Text>
-                    {item.text}
-                </Text>}
-                </AnimatedImageBackground>
-            </PanGestureHandler>
-        )
-        : (
+        <PanGestureHandler onGestureEvent={isFirst ? pan : {}}>
             <AnimatedImageBackground
                 source={item.image}
                 style={[
@@ -57,11 +41,11 @@ const Head = ({ item, isFirst, pan }) => {
                     animatedStyle
                 ]}
             >
-            {item.text && <Text>
-                {item.text}
-            </Text>}
+                {item.text && <Text>
+                    {item.text}
+                </Text>}
             </AnimatedImageBackground>
-        )
+        </PanGestureHandler>
     )
 }
 
@@ -125,7 +109,7 @@ export default function StaggeredHeadDrag({ }){
                  * This will have each head operating on a separate spring animation. 
                  * The for each spring animation, we make each head heavier so a stagger effect will actually happen
                  * 
-                 * FYI: using a withDelay before each spring animation will not cause the effect we want
+                 * FYI: using a withDelay before each spring animation will not cause the prefect stagger effect we want
                  * */
                 animationX.value = withSpring(
                     event.translationX + context.translateX, 

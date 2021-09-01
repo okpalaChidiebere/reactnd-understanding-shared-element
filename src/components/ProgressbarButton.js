@@ -1,37 +1,48 @@
-import React, { useRef } from "react"
+import React from "react"
 import {
   StyleSheet,
   Text,
   View,
   TouchableWithoutFeedback,
-  Animated,
 } from "react-native"
+import Animated, { 
+    interpolateColor,
+    useSharedValue, 
+    useAnimatedStyle,
+    interpolate,
+    Extrapolate,
+    withTiming,
+} from "react-native-reanimated"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 
 export default function ProgressbarButton(){
-    const animation = useRef(new Animated.Value(0)).current //this controls the animtion for the color as well as the progress for the width of the progressBar view 
-    const opacity = useRef(new Animated.Value(1)).current//help us have run an animation when the button progress is completed. The bar will be visible(1) and then fade out when progress complete
+    const animation = useSharedValue(0) //this controls the animtion for the color as well as the progress for the width of the progressBar view 
+    const opacity = useSharedValue(0)//help us have run an animation when the button progress is completed. The bar will be visible(1) and then fade out when progress complete
+      
+    const animatedProgressStyle = useAnimatedStyle(() => {
+        /** Building our Progress animatedstyle */
+        const progressInterpolate = interpolate(
+            animation.value,
+            [0, 1],
+            [0, 100], //interpolate on the percentage
+            Extrapolate.CLAMP //incase the input range goes beyound 0 or 1, we dont want a negative percentage or a percentage over 100
+        )
+      
+        //Our backgrround color interpolate
+        const colorInterpolate = interpolateColor(
+            animation.value,
+            [0, 1],
+            ["#47ff63", "#6347ff"],
+        )
 
-    /** Building our Progress animatedstyle */
-    const progressInterpolate = animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ["0%", "100%"], //interpolate on the percentage
-        extrapolate: "clamp", //incase the input range goes beyound 0 or 1, we dont want a negative percentage or a percentage over 100
+        return {
+            opacity: opacity.value,
+            width: `${progressInterpolate}%`,
+            bottom: 0, //remember we already had top and left of 0 in the styles already. Adding bottom 0, now allows the animated view width to percentage to grow as required
+            backgroundColor: colorInterpolate,
+        }
     })
-      
-    //Our backgrround color interpolate
-    const colorInterpolate = animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ["rgb(71,255,99)", "rgb(99,71,255)"],
-    })
-      
-    const animatedProgressStyle = {
-        opacity,
-        width: progressInterpolate,
-        bottom: 0, //remember we already had top and left of 0 in the styles already. Adding bottom 0, now allows the animated view width to percentage to grow as required
-        backgroundColor: colorInterpolate,
-    }
     /** End building our progress animatedStyle */
 
     /**
@@ -68,33 +79,19 @@ export default function ProgressbarButton(){
         /**In real life, we will control this by some async progress like betwork fetch, but lest just reset everything
          * by restarting the timing and opacity animation again
          */
-        animation.setValue(0)
-        opacity.setValue(1)
-      
+        animation.value = 0
+        opacity.value = 1
+
         /**
          * If this was we real app, we would continally call this timming animation
-         * with smaller toValue like .1, .2, .3 etc with smaller duration time, but just 
-         * calling 1 will do for this demo
+         * with smaller toValue like .1, .2, .3 etc and with smaller duration time as well, 
+         * but just toValue of 1 and longer duration will do for this demo
          */
-        Animated.timing(animation, {
-            toValue: 1,
-            duration: 1500,
-            useNativeDriver: false, //you cant control properties like width, height, backgroundColor can run on native driver
-        }).start(({ finished }) => {
+        animation.value = withTiming(1, { duration: 1500 }, (finished) => {
+            /** We will haide the propgressBar when it is done loading */
             //if our animation was not inerrupted by another press? ie: our animation was completed
             if(finished){
-                Animated.timing(opacity, {
-                    toValue: 0,
-                    duration: 200,
-                    /**
-                     * we can use native driver on opacity and transform properties, but in an animatedStyle, you cannot have 
-                     * some part of the style controlled by the native driver and some part not controlled. 
-                     * Either all of its animated properties is controlled by native driver or all of it will be controlled by JS
-                     * 
-                     * Since we already have backgroundColor and width controlled by js, we had to use js for the opacity as well
-                     */
-                    useNativeDriver: false,
-                }).start()
+                opacity.value = withTiming(0, { duration: 200 })
             }
         })
     }
