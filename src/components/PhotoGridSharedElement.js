@@ -4,10 +4,17 @@ import {
   Text,
   View,
   Image,
-  Animated,
   ScrollView,
   TouchableWithoutFeedback,
 } from "react-native"
+import Animated, { 
+    useSharedValue, 
+    useAnimatedStyle,
+    withTiming,
+    withSpring,
+    interpolate,
+    runOnJS,
+} from "react-native-reanimated"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Colors, Strings } from "../values"
 
@@ -32,13 +39,21 @@ export default function PhotoGridSharedElement({ }){
     const gridImages = useRef([])
     const viewImage = useRef()
     const savedMeasurments = useRef(null)
-    const size = useRef(new Animated.ValueXY()).current //we are animating the widht and height of the images
-    const position = useRef(new Animated.ValueXY()).current //we are animation the absolute position of the images
+
+    //we are animating the widht and height of the images
+    const sizeX = useSharedValue()
+    const sizeY = useSharedValue()
+
+    //we are animation the absolute position of the images
+    const positionX = useSharedValue()
+    const positionY = useSharedValue()
+
     /**
      * We could do an interoplation on the imageDetailsContent based upon the Y positioning, 
      * but we choose to use a separate animated value that we control. So this will do :)
      */
-    const animation = useRef(new Animated.Value(0)).current //for general animation
+    const animation = useSharedValue(0) //for general animation
+
 
     /**
      * 
@@ -64,20 +79,16 @@ export default function PhotoGridSharedElement({ }){
              * We are going to have the activeImage() have thesame measurements with the image clicked in the photo grid
              * we will finally have to swap out the image on the grid to the image in the modal
              */
-            position.setValue({
-                x: pageX,
-                /**
-                 * Note: this 92, was some offeset value to move the activeImage up a bit to fill the space
-                 * left white by the imagepressed in the photo grid. The tutuorial i watched did not use this 
-                 * offset, but the iOS emulator they used was a smaller screensize compared to my own emulator
-                 */
-                y: pageY - 92,
-            })
+            positionX.value = pageX
+            /**
+             * Note: this 92, was some offeset value to move the activeImage up a bit to fill the space
+             * left white by the imagepressed in the photo grid. The tutuorial i watched did not use this 
+             * offset, but the iOS emulator they used was a smaller screensize compared to my own emulator
+             */
+            positionY.value = pageY - 92
 
-            size.setValue({
-                x: width,
-                y: height,
-            })
+            sizeX.value = width
+            sizeY.value = height
 
             setState({
                 activeImage: Heroes[index].photo, //set our active image to the image we clicked
@@ -97,97 +108,70 @@ export default function PhotoGridSharedElement({ }){
              * NOTE: we call `t` target :)
              */
             viewImage.current.measure((tX, tY, tWidth, tHeight, tPageX, tPageY) => {
-                Animated.parallel([
-                    //animate the image to the exact position (tPageX and tPageY will be 0, 0 as expected :) the will have the iage positioned at the top-left corner )
-                    Animated.spring(position.x, {
-                        toValue: tPageX,
-                        useNativeDriver: false,
-                    }),
-                    Animated.spring(position.y, {
-                        toValue: tPageY - 92,
-                        useNativeDriver: false,
-                    }),
-                    //end positioning
-                    //start sizing the image
-                    Animated.spring(size.x, {
-                        toValue: tWidth,
-                        useNativeDriver: false,
-                    }),
-                    Animated.spring(size.y, {
-                        toValue: tHeight,
-                        useNativeDriver: false,
-                    }),
-                    //end sizing the image
-                    //animation for our content. Rememeber we had thins animation value interpolated to be able to slide the content down(off the screen) and up
-                    Animated.spring(animation, {
-                        toValue: 1,
-                        useNativeDriver: true,
-                    }),
-                ]).start()
+                //animate the image to the exact position (tPageX and tPageY will be 0, 0 as expected :) the will have the iage positioned at the top-left corner )
+                positionX.value = withSpring(tPageX)
+                positionY.value = withSpring(tPageY - 92)
+                //end positioning
+
+                //start sizing the image
+                sizeX.value = withSpring(tWidth)
+                sizeY.value = withSpring(tHeight)
+                //end sizing the image
+
+                 //animation for our content. Rememeber we had thins animation value interpolated to be able to slide the content down(off the screen) and up
+                animation.value = withSpring(1)
             })
         })
     }
 
     /**we basically do the revers of our animation we opened the modalView with */
     const handleClose = () => {
-        Animated.parallel([
-            Animated.timing(position.x, {
-                toValue: savedMeasurments.current.pageX,
-                duration: 250,
-                useNativeDriver: false,
-            }),
-            Animated.timing(position.y, {
-                toValue: savedMeasurments.current.pageY,
-                duration: 250,
-                useNativeDriver: false,
-            }),
-            Animated.timing(size.x, {
-                toValue: savedMeasurments.current.width,
-                duration: 250,
-                useNativeDriver: false,
-            }),
-            Animated.timing(size.y, {
-                toValue: savedMeasurments.current.height,
-                duration: 250,
-                useNativeDriver: false,
-            }),
-            //hide back out content
-            Animated.timing(animation, {
-                toValue: 0,
-                duration: 250,
-                useNativeDriver: true,
-            }),
-        ]).start(() => {
-            //this will diable the ponter events of the modal view so that we can control back the photoGrid in the scrollView
+        const handleResetState = () => {
             setState({
                 activeImage: null,
                 activeIndex: null,
             })
+        }
+
+        const timingConfig = { 
+            duration: 250 
+        }
+        positionX.value = withTiming(savedMeasurments.current.pageX, timingConfig)
+        positionY.value = withTiming(savedMeasurments.current.pageY, timingConfig)
+        sizeX.value = withTiming(savedMeasurments.current.width, timingConfig)
+        sizeY.value = withTiming(savedMeasurments.current.height, timingConfig)
+        //hide back our content
+        animation.value = withTiming(0, timingConfig, () => {
+            //this will diable the ponter events of the modal view so that we can control back the photoGrid in the scrollView
+            runOnJS(handleResetState)()
         })
     }
 
-    /** We want to slide the content down out of the way and slide back up later */
-    const animatedImageDetailContentTranslate = animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [300, 0]
+    const animatedImageDetailContentStyles = useAnimatedStyle(() => {
+        /** We want to slide the content down out of the way and slide back up later */
+        const animatedImageDetailContentTranslate = interpolate(
+            animation.value,
+            [0, 1],
+            [300, 0]
+        )
+
+        return {
+            opacity: animation.value,
+            transform: [
+                {
+                    translateY: animatedImageDetailContentTranslate,
+                }
+            ]
+        }
     })
 
-    const animatedImageDetailContentStyles = {
-        opacity: animation,
-        transform: [
-            {
-                translateY: animatedImageDetailContentTranslate,
-            }
-        ]
-    }
-
     /** Render shared item using animated values so it appears in the same spot as our start item */
-    const activeImageStyle = {
-        width: size.x,
-        height: size.y,
-        top: position.y,
-        left: position.x,
-    }
+    const activeImageStyle = useAnimatedStyle(() => ({
+        width: sizeX.value,
+        height: sizeY.value,
+        top: positionY.value,
+        left: positionX.value,
+    }))
 
      /*
      * controls the opacity on our grid image (the image pressed in the grid)
@@ -204,9 +188,9 @@ export default function PhotoGridSharedElement({ }){
      * 
      * we dont want this button to appear when he transition has not happend yet
      */
-    const animatedCloseButtonStyle = {
-        opacity: animation,
-    }
+    const animatedCloseButtonStyle = useAnimatedStyle(() => ({
+        opacity: animation.value,
+    }))
 
     const { activeImage, activeIndex } = state
 
